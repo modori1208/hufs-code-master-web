@@ -1,0 +1,37 @@
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { cn } from '@/lib/utils';
+
+type Props = {
+  children: string;
+  className?: string;
+};
+
+/**
+ * 마크다운 본문 렌더러.
+ *
+ * <p>본문 컨테이너에 Tailwind 의 `prose` 유틸을 적용하여 견출/문단/리스트/코드 블록 등에
+ * 기본 타이포그래피 스타일을 입힙니다. GitHub Flavored Markdown (표, 체크박스, 취소선)
+ * 도 지원합니다.
+ */
+export function Markdown({ children, className }: Props) {
+  return (
+    <div
+      className={cn(
+        'prose prose-neutral max-w-none',
+        'prose-headings:scroll-mt-20 prose-headings:font-semibold',
+        'prose-pre:bg-muted prose-pre:text-foreground prose-pre:border prose-pre:border-border',
+        'prose-code:bg-muted prose-code:text-foreground prose-code:rounded prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.875em] prose-code:font-normal',
+        'prose-code:before:content-none prose-code:after:content-none',
+        'prose-pre:prose-code:bg-transparent prose-pre:prose-code:p-0',
+        'prose-a:text-primary prose-a:no-underline hover:prose-a:underline',
+        'prose-blockquote:border-l-primary/40 prose-blockquote:text-muted-foreground',
+        'prose-img:rounded-md',
+        'prose-table:my-6',
+        className,
+      )}
+    >
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{children}</ReactMarkdown>
+    </div>
+  );
+}

@@ -1,0 +1,203 @@
+/**
+ * 백엔드 응답 envelope. 모든 JSON 응답은 이 형태로 감싸집니다.
+ */
+export type ApiResponse<T> = {
+  data: T | null;
+  error_code: string | null;
+  message: string | null;
+};
+
+/**
+ * Spring Data 의 `Page<T>` 직렬화 형태 (SNAKE_CASE 변환 후).
+ */
+export type Page<T> = {
+  content: T[];
+  number: number;
+  size: number;
+  total_elements: number;
+  total_pages: number;
+  number_of_elements: number;
+  first: boolean;
+  last: boolean;
+};
+
+// ----- User -----
+
+export type MemberStatus =
+  | 'ATTENDING'
+  | 'GRADUATED'
+  | 'PROFESSOR'
+  | 'COMMON_ID'
+  | 'STAFF';
+
+export type MemberRole = 'STUDENT' | 'ADMIN';
+
+export type MemberProfile = {
+  id: number;
+  email: string;
+  name: string;
+  department: string;
+  status: MemberStatus;
+  role: MemberRole;
+};
+
+// ----- Problem -----
+
+export type Difficulty =
+  | 'BRONZE'
+  | 'SILVER'
+  | 'GOLD'
+  | 'PLATINUM'
+  | 'DIAMOND'
+  | 'RUBY';
+
+export type ProblemSummary = {
+  id: number;
+  title: string;
+  difficulty: Difficulty;
+};
+
+export type ProblemSample = {
+  order_index: number;
+  input: string;
+  output: string;
+};
+
+export type ProblemDetail = {
+  id: number;
+  title: string;
+  difficulty: Difficulty;
+  description_markdown: string;
+  time_limit_ms: number;
+  memory_limit_mb: number;
+  samples: ProblemSample[];
+};
+
+// ----- Track -----
+
+export type TrackSummary = {
+  id: number;
+  name: string;
+  problem_count: number;
+};
+
+export type TrackDetail = {
+  id: number;
+  name: string;
+  description_markdown: string;
+  problems: ProblemSummary[];
+};
+
+// ----- Submission -----
+
+export type Language = 'C' | 'CPP' | 'JAVA' | 'PYTHON3' | 'KOTLIN';
+
+export type SubmissionVerdict =
+  | 'PENDING'
+  | 'JUDGING'
+  | 'ACCEPTED'
+  | 'WRONG_ANSWER'
+  | 'TIME_LIMIT_EXCEEDED'
+  | 'MEMORY_LIMIT_EXCEEDED'
+  | 'RUNTIME_ERROR'
+  | 'COMPILE_ERROR'
+  | 'JUDGEMENT_ERROR';
+
+export type Submission = {
+  id: number;
+  problem_id: number;
+  language: Language;
+  verdict: SubmissionVerdict;
+  runtime_ms: number | null;
+  memory_kb: number | null;
+  created_at: string;
+};
+
+export type SubmissionRequest = {
+  problem_id: number;
+  language: Language;
+  source_code: string;
+};
+
+/**
+ * 채점 현황 등 공개 목록용. 소스 코드는 없고 제출자 이름이 포함됩니다.
+ */
+export type PublicSubmission = {
+  id: number;
+  member_name: string;
+  language: Language;
+  verdict: SubmissionVerdict;
+  runtime_ms: number | null;
+  memory_kb: number | null;
+  created_at: string;
+};
+
+// ----- Activity -----
+
+export type Activity = {
+  current_streak: number;
+  longest_streak: number;
+  weekly_solve_count: number;
+  weekly_window_start: string;
+  last_solved_date: string | null;
+};
+
+// ----- Assistant -----
+
+export type AssistantAskRequest = {
+  problem_id?: number;
+  source_code?: string;
+  language?: Language;
+  message: string;
+};
+
+export type AssistantAskResponse = {
+  reply: string;
+  model: string;
+  stub: boolean;
+};
+
+// ----- Admin -----
+
+export type CreateProblemRequest = {
+  title: string;
+  description_markdown: string;
+  time_limit_ms: number;
+  memory_limit_mb: number;
+  difficulty: Difficulty;
+};
+
+export type UpdateProblemRequest = CreateProblemRequest;
+
+export type AdminTestCase = {
+  id: number;
+  order_index: number;
+  sample: boolean;
+  input: string;
+  input_sha256: string;
+  input_size: number;
+  output: string;
+  output_sha256: string;
+  output_size: number;
+};
+
+export type CreateTestCaseRequest = {
+  order_index: number;
+  sample: boolean;
+  input: string;
+  output: string;
+};
+
+export type UpdateTestCaseRequest = CreateTestCaseRequest;
+
+export type CreateTrackRequest = {
+  name: string;
+  description_markdown: string;
+};
+
+export type UpdateTrackRequest = CreateTrackRequest;
+
+export type AddTrackProblemRequest = {
+  problem_id: number;
+  order_index: number;
+};
