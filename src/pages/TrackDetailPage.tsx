@@ -14,6 +14,8 @@ import {
 } from '@/components/ui/table';
 import { Container } from '@/components/layout/Container';
 import { Markdown } from '@/components/Markdown';
+import { ProblemStatusIcon } from '@/components/problem/ProblemStatusIcon';
+import { useMyProblemStatus } from '@/hooks/useMyProblemStatus';
 import { getTrack } from '@/lib/api/tracks';
 import { DIFFICULTY_BADGE, DIFFICULTY_LABEL } from '@/lib/labels';
 import { cn } from '@/lib/utils';
@@ -21,6 +23,7 @@ import { cn } from '@/lib/utils';
 export function TrackDetailPage() {
   const { id } = useParams<{ id: string }>();
   const trackId = Number(id);
+  const { statusOf } = useMyProblemStatus();
 
   const query = useQuery({
     queryKey: ['track', trackId],
@@ -67,6 +70,7 @@ export function TrackDetailPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-10"></TableHead>
                 <TableHead className="w-20">#</TableHead>
                 <TableHead>제목</TableHead>
                 <TableHead className="w-32">난이도</TableHead>
@@ -76,6 +80,9 @@ export function TrackDetailPage() {
               {track.problems.length > 0 ? (
                 track.problems.map((p) => (
                   <TableRow key={p.id}>
+                    <TableCell>
+                      <ProblemStatusIcon status={statusOf(p.id)} />
+                    </TableCell>
                     <TableCell className="font-mono text-muted-foreground">
                       {p.id}
                     </TableCell>
@@ -99,7 +106,7 @@ export function TrackDetailPage() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={3} className="py-10 text-center text-muted-foreground">
+                  <TableCell colSpan={4} className="py-10 text-center text-muted-foreground">
                     이 트랙에 등록된 문제가 없습니다.
                   </TableCell>
                 </TableRow>

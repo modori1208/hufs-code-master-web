@@ -134,6 +134,15 @@ export type SubmissionRequest = {
 };
 
 /**
+ * 본인의 풀이 상태. 문제 목록 ✓ / ○ 표시에 사용됩니다.
+ * `attempted` 는 `solved` 와 겹치지 않습니다.
+ */
+export type MyProblemStatus = {
+  solved: number[];
+  attempted: number[];
+};
+
+/**
  * 채점 현황 등 공개 목록용. 소스 코드는 없고 제출자 이름이 포함됩니다.
  */
 export type PublicSubmission = {

@@ -119,6 +119,7 @@ export function SubmissionPanel({ problemId }: { problemId: number }) {
     onSuccess: () => {
       toast.success('제출되었습니다. 채점 결과를 기다리는 중입니다.');
       queryClient.invalidateQueries({ queryKey: ['submissions'] });
+      queryClient.invalidateQueries({ queryKey: ['me', 'problem-status'] });
     },
     onError: (err) => {
       const message = err instanceof Error ? err.message : '알 수 없는 오류';

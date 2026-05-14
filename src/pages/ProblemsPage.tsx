@@ -20,6 +20,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Container } from '@/components/layout/Container';
+import { ProblemStatusIcon } from '@/components/problem/ProblemStatusIcon';
+import { useMyProblemStatus } from '@/hooks/useMyProblemStatus';
 import { listProblems } from '@/lib/api/problems';
 import type { Difficulty } from '@/lib/api/types';
 import { DIFFICULTY_BADGE, DIFFICULTY_LABEL } from '@/lib/labels';
@@ -40,6 +42,7 @@ const DIFFICULTIES: Difficulty[] = [
 export function ProblemsPage() {
   const [difficulty, setDifficulty] = useState<DifficultyFilter>(ALL);
   const [page, setPage] = useState(0);
+  const { statusOf } = useMyProblemStatus();
 
   const query = useQuery({
     queryKey: ['problems', { difficulty, page }],
@@ -88,6 +91,7 @@ export function ProblemsPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-10"></TableHead>
               <TableHead className="w-20">#</TableHead>
               <TableHead>제목</TableHead>
               <TableHead className="w-32">난이도</TableHead>
@@ -97,26 +101,23 @@ export function ProblemsPage() {
             {query.isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell>
-                    <Skeleton className="h-4 w-10" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-64" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-16" />
+                  <TableCell colSpan={4}>
+                    <Skeleton className="h-5 w-full" />
                   </TableCell>
                 </TableRow>
               ))
             ) : query.isError ? (
               <TableRow>
-                <TableCell colSpan={3} className="py-10 text-center text-destructive">
+                <TableCell colSpan={4} className="py-10 text-center text-destructive">
                   문제 목록을 불러오지 못했습니다.
                 </TableCell>
               </TableRow>
             ) : query.data && query.data.content.length > 0 ? (
               query.data.content.map((problem) => (
                 <TableRow key={problem.id} className="cursor-pointer">
+                  <TableCell>
+                    <ProblemStatusIcon status={statusOf(problem.id)} />
+                  </TableCell>
                   <TableCell className="font-mono text-muted-foreground">
                     {problem.id}
                   </TableCell>
@@ -140,7 +141,7 @@ export function ProblemsPage() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={3} className="py-10 text-center text-muted-foreground">
+                <TableCell colSpan={4} className="py-10 text-center text-muted-foreground">
                   등록된 문제가 없습니다.
                 </TableCell>
               </TableRow>

@@ -1,5 +1,5 @@
 import { apiGet, apiPost, buildQuery } from './client';
-import type { Page, Submission, SubmissionRequest } from './types';
+import type { MyProblemStatus, Page, Submission, SubmissionRequest } from './types';
 
 export type ListMySubmissionsParams = {
   page?: number;
@@ -17,4 +17,11 @@ export function listMySubmissions(
   return apiGet<Page<Submission>>(
     `/api/v1/submissions/me${buildQuery(params)}`,
   );
+}
+
+/**
+ * 본인의 풀이 상태 조회. 문제 목록 ✓ / ○ 표시에 사용됩니다.
+ */
+export function getMyProblemStatus(): Promise<MyProblemStatus> {
+  return apiGet<MyProblemStatus>('/api/v1/me/problem-status');
 }
