@@ -1,4 +1,5 @@
 import { Editor } from '@monaco-editor/react';
+import { useTheme } from 'next-themes';
 import { Loader2 } from 'lucide-react';
 import type { Language } from '@/lib/api/types';
 
@@ -21,16 +22,22 @@ type Props = {
 };
 
 export function CodeEditor({ value, onChange, language, height = 480 }: Props) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+  const monacoTheme = isDark ? 'vs-dark' : 'vs';
+
   return (
-    <div className="overflow-hidden rounded-md border border-border bg-[#1e1e1e]">
+    <div
+      className={cnContainer(isDark)}
+    >
       <Editor
         height={height}
         language={MONACO_LANG[language]}
         value={value}
         onChange={(v) => onChange(v ?? '')}
-        theme="vs-dark"
+        theme={monacoTheme}
         loading={
-          <div className="flex h-full items-center justify-center text-zinc-400">
+          <div className="flex h-full items-center justify-center text-muted-foreground">
             <Loader2 className="mr-2 size-4 animate-spin" />
             에디터를 불러오는 중...
           </div>
@@ -60,4 +67,10 @@ export function CodeEditor({ value, onChange, language, height = 480 }: Props) {
       />
     </div>
   );
+}
+
+// Monaco 가 로드되기 전 보이는 배경색을 테마에 맞춰 잡아줍니다.
+function cnContainer(isDark: boolean): string {
+  const base = 'overflow-hidden rounded-md border border-border';
+  return isDark ? `${base} bg-[#1e1e1e]` : `${base} bg-[#fffffe]`;
 }

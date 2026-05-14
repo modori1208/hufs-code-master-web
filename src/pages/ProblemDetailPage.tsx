@@ -28,6 +28,7 @@ function isTabValue(v: string | null): v is TabValue {
   return v === 'problem' || v === 'submit' || v === 'status';
 }
 
+
 export function ProblemDetailPage() {
   const { id } = useParams<{ id: string }>();
   const problemId = Number(id);
@@ -103,9 +104,9 @@ export function ProblemDetailPage() {
 
       <Tabs value={tab} onValueChange={handleTabChange} className="mt-8">
         <TabsList>
-          <TabsTrigger value="problem">문제</TabsTrigger>
-          <TabsTrigger value="submit">제출</TabsTrigger>
-          <TabsTrigger value="status">채점 현황</TabsTrigger>
+          <TabsTrigger value="problem" className="px-6">문제</TabsTrigger>
+          <TabsTrigger value="submit" className="px-6">제출</TabsTrigger>
+          <TabsTrigger value="status" className="px-6">채점 현황</TabsTrigger>
         </TabsList>
 
         <TabsContent value="problem" className="mt-6">

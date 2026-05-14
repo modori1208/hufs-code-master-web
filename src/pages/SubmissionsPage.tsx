@@ -98,10 +98,10 @@ export function SubmissionsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right text-muted-foreground">
-                    {s.runtime_ms !== null ? `${s.runtime_ms} ms` : '-'}
+                    {s.runtime_ms != null ? `${s.runtime_ms} ms` : '-'}
                   </TableCell>
                   <TableCell className="text-right text-muted-foreground">
-                    {s.memory_kb !== null ? `${s.memory_kb} KB` : '-'}
+                    {s.memory_kb != null ? `${s.memory_kb} KB` : '-'}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {formatDateTime(s.created_at)}

@@ -1,11 +1,14 @@
-import { apiDelete, apiGet, apiPost, apiPut } from './client';
+import { apiDelete, apiGet, apiPost, apiPut, buildQuery } from './client';
 import type {
   AddTrackProblemRequest,
+  AdminMember,
   AdminTestCase,
+  BanPermanentlyRequest,
+  BanTemporarilyRequest,
   CreateProblemRequest,
   CreateTestCaseRequest,
   CreateTrackRequest,
-  MemberProfile,
+  Page,
   ProblemDetail,
   TrackDetail,
   UpdateProblemRequest,
@@ -101,10 +104,47 @@ export function removeTrackProblem(
 
 // ----- Members -----
 
-export function grantAdmin(memberId: number): Promise<MemberProfile> {
-  return apiPut<MemberProfile>(`/api/v1/admin/members/${memberId}/grant-admin`);
+export type ListAdminMembersParams = {
+  search?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+};
+
+export function listAdminMembers(
+  params: ListAdminMembersParams = {},
+): Promise<Page<AdminMember>> {
+  return apiGet<Page<AdminMember>>(`/api/v1/admin/members${buildQuery(params)}`);
 }
 
-export function revokeAdmin(memberId: number): Promise<MemberProfile> {
-  return apiPut<MemberProfile>(`/api/v1/admin/members/${memberId}/revoke-admin`);
+export function grantAdmin(memberId: number): Promise<AdminMember> {
+  return apiPut<AdminMember>(`/api/v1/admin/members/${memberId}/grant-admin`);
+}
+
+export function revokeAdmin(memberId: number): Promise<AdminMember> {
+  return apiPut<AdminMember>(`/api/v1/admin/members/${memberId}/revoke-admin`);
+}
+
+export function banTemporarily(
+  memberId: number,
+  body: BanTemporarilyRequest,
+): Promise<AdminMember> {
+  return apiPost<AdminMember>(
+    `/api/v1/admin/members/${memberId}/ban-temporarily`,
+    body,
+  );
+}
+
+export function banPermanently(
+  memberId: number,
+  body: BanPermanentlyRequest,
+): Promise<AdminMember> {
+  return apiPost<AdminMember>(
+    `/api/v1/admin/members/${memberId}/ban-permanently`,
+    body,
+  );
+}
+
+export function unbanMember(memberId: number): Promise<AdminMember> {
+  return apiDelete<AdminMember>(`/api/v1/admin/members/${memberId}/ban`);
 }

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FilePlus2, FolderPlus } from 'lucide-react';
+import { FilePlus2, FolderPlus, Users } from 'lucide-react';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const sections = [
@@ -15,6 +15,12 @@ const sections = [
     description: '트랙 생성과 문제 배치를 관리합니다.',
     to: '/admin/tracks',
   },
+  {
+    icon: Users,
+    title: '회원 관리',
+    description: '회원을 검색하고 권한·차단을 관리합니다.',
+    to: '/admin/members',
+  },
 ];
 
 export default function AdminPage() {
@@ -27,7 +33,7 @@ export default function AdminPage() {
         </p>
       </header>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
+      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {sections.map(({ icon: Icon, title, description, to }) => (
           <Link key={to} to={to} className="group">
             <Card className="h-full transition-colors group-hover:border-primary/50">

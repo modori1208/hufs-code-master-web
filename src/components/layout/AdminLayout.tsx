@@ -1,6 +1,12 @@
 import { Suspense, lazy } from 'react';
 import { NavLink, Route, Routes } from 'react-router-dom';
-import { FilePlus2, FolderPlus, LayoutDashboard, Loader2 } from 'lucide-react';
+import {
+  FilePlus2,
+  FolderPlus,
+  LayoutDashboard,
+  Loader2,
+  Users,
+} from 'lucide-react';
 import { Container } from './Container';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { cn } from '@/lib/utils';
@@ -12,11 +18,13 @@ const AdminProblemsPage = lazy(() => import('@/pages/AdminProblemsPage'));
 const AdminProblemEditPage = lazy(() => import('@/pages/AdminProblemEditPage'));
 const AdminTracksPage = lazy(() => import('@/pages/AdminTracksPage'));
 const AdminTrackEditPage = lazy(() => import('@/pages/AdminTrackEditPage'));
+const AdminMembersPage = lazy(() => import('@/pages/AdminMembersPage'));
 
 const navItems = [
   { to: '/admin', label: '대시보드', icon: LayoutDashboard, end: true },
   { to: '/admin/problems', label: '문제', icon: FilePlus2, end: false },
   { to: '/admin/tracks', label: '트랙', icon: FolderPlus, end: false },
+  { to: '/admin/members', label: '회원', icon: Users, end: false },
 ];
 
 export default function AdminLayout() {
@@ -66,6 +74,7 @@ export default function AdminLayout() {
               <Route path="tracks" element={<AdminTracksPage />} />
               <Route path="tracks/new" element={<AdminTrackEditPage />} />
               <Route path="tracks/:id/edit" element={<AdminTrackEditPage />} />
+              <Route path="members" element={<AdminMembersPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>

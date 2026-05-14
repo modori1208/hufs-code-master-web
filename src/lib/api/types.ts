@@ -35,10 +35,24 @@ export type MemberRole = 'STUDENT' | 'ADMIN';
 export type MemberProfile = {
   id: number;
   email: string;
+  /** 실명 (SSO 제공). */
   name: string;
+  /** 사이트 닉네임. 미설정 상태면 null. */
+  nickname: string | null;
   department: string;
   status: MemberStatus;
   role: MemberRole;
+  status_message: string | null;
+  has_profile_image: boolean;
+  profile_image_updated_at: string | null;
+  has_cover_image: boolean;
+  cover_image_updated_at: string | null;
+  /** 영구 차단 여부. */
+  banned_permanently: boolean;
+  /** 임시 차단 종료 시각 (ISO local datetime). */
+  banned_until: string | null;
+  /** 차단 사유 (있다면). */
+  ban_reason: string | null;
 };
 
 // ----- Problem -----
@@ -124,12 +138,31 @@ export type SubmissionRequest = {
  */
 export type PublicSubmission = {
   id: number;
-  member_name: string;
+  nickname: string;
+  department: string;
   language: Language;
   verdict: SubmissionVerdict;
   runtime_ms: number | null;
   memory_kb: number | null;
   created_at: string;
+};
+
+// ----- Public profile (다른 사용자) -----
+
+export type UserPublicProfile = {
+  nickname: string;
+  department: string;
+  role: MemberRole;
+  status_message: string | null;
+  has_profile_image: boolean;
+  profile_image_updated_at: string | null;
+  has_cover_image: boolean;
+  cover_image_updated_at: string | null;
+  joined_at: string;
+  current_streak: number;
+  longest_streak: number;
+  weekly_solve_count: number;
+  last_solved_date: string | null;
 };
 
 // ----- Activity -----
@@ -200,4 +233,31 @@ export type UpdateTrackRequest = CreateTrackRequest;
 export type AddTrackProblemRequest = {
   problem_id: number;
   order_index: number;
+};
+
+// ----- Admin - Members -----
+
+export type AdminMember = {
+  id: number;
+  email: string;
+  name: string;
+  nickname: string | null;
+  department: string;
+  status: MemberStatus;
+  role: MemberRole;
+  banned_permanently: boolean;
+  banned_until: string | null;
+  banned_at: string | null;
+  ban_reason: string | null;
+  created_at: string;
+};
+
+export type BanTemporarilyRequest = {
+  /** ISO-8601 local datetime, 예: 2026-06-01T00:00:00 */
+  until: string;
+  reason?: string | null;
+};
+
+export type BanPermanentlyRequest = {
+  reason?: string | null;
 };

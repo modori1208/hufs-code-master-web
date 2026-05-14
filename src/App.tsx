@@ -10,9 +10,11 @@ import { LoginPage } from '@/pages/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProblemDetailPage } from '@/pages/ProblemDetailPage';
 import { ProblemsPage } from '@/pages/ProblemsPage';
+import { SettingsPage } from '@/pages/SettingsPage';
 import { SubmissionsPage } from '@/pages/SubmissionsPage';
 import { TrackDetailPage } from '@/pages/TrackDetailPage';
 import { TracksPage } from '@/pages/TracksPage';
+import { UserPage } from '@/pages/UserPage';
 
 // 관리자 코드는 lazy 로드. 자식 라우트 정의는 AdminLayout 내부에서 처리하므로
 // 일반 사용자 메인 번들에는 admin 의 세부 경로/페이지 식별자가 노출되지 않습니다.
@@ -74,6 +76,22 @@ export default function App() {
           element={
             <RequireAuth>
               <SubmissionsPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <RequireAuth>
+              <SettingsPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/users/:nickname"
+          element={
+            <RequireAuth>
+              <UserPage />
             </RequireAuth>
           }
         />

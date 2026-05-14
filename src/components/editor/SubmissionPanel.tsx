@@ -232,10 +232,10 @@ export function SubmissionPanel({ problemId }: { problemId: number }) {
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      {s.runtime_ms !== null ? (
+                      {s.runtime_ms != null ? (
                         <span>{s.runtime_ms} ms</span>
                       ) : null}
-                      {s.memory_kb !== null ? (
+                      {s.memory_kb != null ? (
                         <span>{s.memory_kb} KB</span>
                       ) : null}
                       <span>{formatTime(s.created_at)}</span>

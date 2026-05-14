@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -88,8 +89,16 @@ export function SubmissionFeed({ problemId }: { problemId: number }) {
                     <TableCell className="font-mono text-xs text-muted-foreground">
                       {s.id}
                     </TableCell>
-                    <TableCell className="font-medium">
-                      {s.member_name}
+                    <TableCell>
+                      <Link
+                        to={`/users/${encodeURIComponent(s.nickname)}`}
+                        className="font-medium hover:underline"
+                      >
+                        {s.nickname}
+                      </Link>
+                      <span className="ml-2 text-xs text-muted-foreground/70">
+                        {s.department}
+                      </span>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {LANGUAGE_LABEL[s.language]}
@@ -106,10 +115,10 @@ export function SubmissionFeed({ problemId }: { problemId: number }) {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground">
-                      {s.runtime_ms !== null ? `${s.runtime_ms} ms` : '-'}
+                      {s.runtime_ms != null ? `${s.runtime_ms} ms` : '-'}
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground">
-                      {s.memory_kb !== null ? `${s.memory_kb} KB` : '-'}
+                      {s.memory_kb != null ? `${s.memory_kb} KB` : '-'}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {formatDateTime(s.created_at)}
