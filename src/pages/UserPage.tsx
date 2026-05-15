@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -8,7 +8,6 @@ import {
   Flame,
   Github,
   Image as ImageIcon,
-  Linkedin,
   ListChecks,
   Loader2,
   Pencil,
@@ -61,7 +60,6 @@ import {
   updateSocialAccounts,
   updateStatusMessage,
   uploadImage,
-  type ImageKind,
 } from '@/lib/api/me';
 import { getUserById } from '@/lib/api/users';
 import { userImageUrl } from '@/lib/image-urls';
@@ -72,7 +70,32 @@ import type { UserPublicProfile } from '@/lib/api/types';
 const STATUS_MAX = 200;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
-function formatDate(iso: string | null): string {
+function LinkedinIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden
+      className={className}
+    >
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    </svg>
+  );
+}
+
+function formatYearMonth(iso: string | null): string {
+  if (!iso) return t.common.none;
+  try {
+    return new Date(iso).toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function formatFullDate(iso: string | null): string {
   if (!iso) return t.common.none;
   try {
     return new Date(iso).toLocaleDateString('ko-KR', {
@@ -108,6 +131,7 @@ export function UserPage() {
   const { user: currentUser } = useAuth();
   const isOwner = !!currentUser && validId && currentUser.id === userId;
   const showBannedDialog = useBannedDialog((s) => s.show);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const query = useQuery({
     queryKey: ['user', userId],
@@ -193,73 +217,95 @@ export function UserPage() {
       ) : null}
 
       {/* Cover */}
-      <div className="relative">
-        <div
-          className={cn(
-            'h-64 w-full bg-gradient-to-br from-muted to-muted/40 md:h-96',
-            coverUrl ? 'bg-cover bg-center' : '',
-          )}
-          style={coverUrl ? { backgroundImage: `url(${coverUrl})` } : undefined}
-        />
-        {isOwner ? (
-          <div className="absolute right-4 top-4">
-            <ImageEditMenu
-              kind="cover"
-              hasImage={user.has_cover_image}
-              userId={user.id}
-              variant="cover"
-            />
-          </div>
-        ) : null}
-      </div>
+      <div
+        className={cn(
+          'h-64 w-full bg-gradient-to-br from-muted to-muted/40 md:h-96',
+          coverUrl ? 'bg-cover bg-center' : '',
+        )}
+        style={coverUrl ? { backgroundImage: `url(${coverUrl})` } : undefined}
+      />
 
       <Container className="pb-10">
-        <header>
-          {/* 아바타만 cover 아래쪽에 살짝 걸침. 텍스트는 cover 아래로 내려 배경과 분리. */}
-          <div className="relative inline-block">
-            <Avatar className="-mt-14 size-28 border-4 border-background shadow-md md:-mt-16 md:size-32">
-              {profileUrl ? <AvatarImage src={profileUrl} alt={user.nickname} /> : null}
-              <AvatarFallback className="bg-primary text-2xl font-medium text-primary-foreground">
-                {getInitial(user.nickname)}
-              </AvatarFallback>
-            </Avatar>
-            {isOwner ? (
-              <div className="absolute bottom-0 right-0">
-                <ImageEditMenu
-                  kind="profile"
-                  hasImage={user.has_profile_image}
-                  userId={user.id}
-                  variant="profile"
-                />
-              </div>
-            ) : null}
-          </div>
-
-          <div className="mt-4">
-            <div className="flex flex-wrap items-baseline gap-2">
-              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
-                {user.nickname}
-              </h1>
-              {user.role === 'ADMIN' ? (
-                <Badge variant="secondary" className="gap-1">
-                  <Shield className="size-3" />
-                  {t.user.adminBadge}
-                </Badge>
+        <header className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            {/* 아바타만 cover 아래쪽에 살짝 걸침. 텍스트는 cover 아래로 내려 배경과 분리. */}
+            <div className="relative inline-block">
+              <Avatar className="-mt-14 size-28 border-4 border-background shadow-md md:-mt-16 md:size-32">
+                {profileUrl ? <AvatarImage src={profileUrl} alt={user.nickname} /> : null}
+                <AvatarFallback className="bg-primary text-2xl font-medium text-primary-foreground">
+                  {getInitial(user.nickname)}
+                </AvatarFallback>
+              </Avatar>
+              {isOwner ? (
+                <div className="absolute bottom-0 right-0">
+                  <ImageEditMenu
+                    hasImage={user.has_profile_image}
+                    userId={user.id}
+                  />
+                </div>
               ) : null}
             </div>
-            <p className="mt-1 text-muted-foreground">{user.department}</p>
 
-            <StatusMessage user={user} isOwner={isOwner} userId={user.id} />
+            <div className="mt-4">
+              <div className="flex flex-wrap items-baseline gap-2">
+                <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+                  {user.nickname}
+                </h1>
+                {user.role === 'ADMIN' ? (
+                  <Badge variant="secondary" className="gap-1">
+                    <Shield className="size-3" />
+                    {t.user.adminBadge}
+                  </Badge>
+                ) : null}
+              </div>
+              <p className="mt-1 text-muted-foreground">{user.department}</p>
 
-            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <CalendarDays className="size-3.5" />
-                {t.user.joinedAt(formatDate(user.joined_at))}
-              </span>
-              <SocialAccounts user={user} isOwner={isOwner} />
+              <StatusMessage
+                user={user}
+                isOwner={isOwner}
+                onEditClick={() => setEditDialogOpen(true)}
+              />
+
+              <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="flex cursor-default items-center gap-1.5">
+                      <CalendarDays className="size-3.5" />
+                      {t.user.joinedAt(formatYearMonth(user.joined_at))}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>{formatFullDate(user.joined_at)}</TooltipContent>
+                </Tooltip>
+                <SocialAccounts
+                  user={user}
+                  isOwner={isOwner}
+                  onEditClick={() => setEditDialogOpen(true)}
+                />
+              </div>
             </div>
           </div>
+          {isOwner ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setEditDialogOpen(true)}
+              aria-label={t.user.editProfile.buttonLabel}
+              className="mt-4 shrink-0"
+            >
+              <Pencil className="size-4" />
+              <span className="hidden sm:inline">{t.user.editProfile.buttonLabel}</span>
+            </Button>
+          ) : null}
         </header>
+
+        {isOwner ? (
+          <ProfileEditDialog
+            open={editDialogOpen}
+            onOpenChange={setEditDialogOpen}
+            user={user}
+          />
+        ) : null}
 
         <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
@@ -306,17 +352,14 @@ export function UserPage() {
   );
 }
 
-// ----- Image edit (본인만 노출) -----
+// ----- Profile image edit (아바타 우측 하단, 본인만 노출) -----
 
 type ImageEditMenuProps = {
-  kind: ImageKind;
   hasImage: boolean;
   userId: number;
-  /** 'profile' 은 아바타 오른쪽 하단 원형 버튼, 'cover' 는 우상단 직사각형 버튼. */
-  variant: 'profile' | 'cover';
 };
 
-function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) {
+function ImageEditMenu({ hasImage, userId }: ImageEditMenuProps) {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -325,19 +368,17 @@ function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) 
   };
 
   const uploadMutation = useMutation({
-    mutationFn: (file: File) => uploadImage(kind, file),
+    mutationFn: (file: File) => uploadImage('profile', file),
     onSuccess: (profile) => {
       queryClient.setQueryData(AUTH_QUERY_KEY, profile);
       invalidate();
-      toast.success(
-        kind === 'profile' ? t.user.image.profileUploaded : t.user.image.coverUploaded,
-      );
+      toast.success(t.user.image.profileUploaded);
     },
     onError: (err) => toast.error(err instanceof Error ? err.message : t.user.image.uploadFailed),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => deleteImage(kind),
+    mutationFn: () => deleteImage('profile'),
     onSuccess: (profile) => {
       queryClient.setQueryData(AUTH_QUERY_KEY, profile);
       invalidate();
@@ -377,36 +418,19 @@ function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) 
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          {variant === 'profile' ? (
-            <Button
-              type="button"
-              size="icon"
-              className="size-9 rounded-full border-2 border-background shadow-md"
-              disabled={pending}
-              aria-label={t.user.image.profileAriaLabel}
-            >
-              {pending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Camera className="size-4" />
-              )}
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              disabled={pending}
-              className="shadow-md"
-            >
-              {pending ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <ImageIcon className="size-4" />
-              )}
-              {t.user.image.coverButton}
-            </Button>
-          )}
+          <Button
+            type="button"
+            size="icon"
+            className="size-9 rounded-full border-2 border-background shadow-md"
+            disabled={pending}
+            aria-label={t.user.image.profileAriaLabel}
+          >
+            {pending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Camera className="size-4" />
+            )}
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuItem
@@ -436,94 +460,15 @@ function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) 
 type StatusMessageProps = {
   user: UserPublicProfile;
   isOwner: boolean;
-  userId: number;
+  onEditClick: () => void;
 };
 
-function StatusMessage({ user, isOwner, userId }: StatusMessageProps) {
-  const queryClient = useQueryClient();
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(user.status_message ?? '');
-
-  useEffect(() => {
-    setDraft(user.status_message ?? '');
-  }, [user.status_message]);
-
-  const mutation = useMutation({
-    mutationFn: (next: string | null) => updateStatusMessage(next),
-    onSuccess: (profile) => {
-      queryClient.setQueryData(AUTH_QUERY_KEY, profile);
-      queryClient.setQueryData<UserPublicProfile | undefined>(
-        ['user', userId],
-        (prev) => (prev ? { ...prev, status_message: profile.status_message } : prev),
-      );
-      toast.success(t.user.statusMessage.saved);
-      setEditing(false);
-    },
-    onError: (err) => {
-      const msg = err instanceof ApiError ? err.message : t.user.statusMessage.saveFailed;
-      toast.error(msg);
-    },
-  });
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const trimmed = draft.trim();
-    mutation.mutate(trimmed.length === 0 ? null : trimmed);
-  };
-
-  const handleCancel = () => {
-    setDraft(user.status_message ?? '');
-    setEditing(false);
-  };
-
-  if (editing) {
-    return (
-      <form onSubmit={handleSubmit} className="mt-3 max-w-2xl">
-        <Textarea
-          autoFocus
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          maxLength={STATUS_MAX}
-          rows={3}
-          placeholder={t.user.statusMessage.placeholder}
-        />
-        <div className="mt-2 flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">
-            {draft.trim().length} / {STATUS_MAX}
-          </span>
-          <div className="flex gap-2">
-            <Button type="button" variant="ghost" size="sm" onClick={handleCancel}>
-              {t.common.cancel}
-            </Button>
-            <Button type="submit" size="sm" disabled={mutation.isPending}>
-              {mutation.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-              {t.common.save}
-            </Button>
-          </div>
-        </div>
-      </form>
-    );
-  }
-
+function StatusMessage({ user, isOwner, onEditClick }: StatusMessageProps) {
   if (user.status_message) {
     return (
-      <div className="group/status mt-3 flex max-w-2xl items-start gap-2">
-        <p className="flex-1 whitespace-pre-wrap text-sm leading-relaxed">
-          {user.status_message}
-        </p>
-        {isOwner ? (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => setEditing(true)}
-            className="opacity-0 transition-opacity group-hover/status:opacity-100"
-            aria-label={t.user.statusMessage.editAriaLabel}
-          >
-            <Pencil className="size-4" />
-          </Button>
-        ) : null}
-      </div>
+      <p className="mt-3 max-w-2xl whitespace-pre-wrap text-sm leading-relaxed">
+        {user.status_message}
+      </p>
     );
   }
 
@@ -533,7 +478,7 @@ function StatusMessage({ user, isOwner, userId }: StatusMessageProps) {
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => setEditing(true)}
+        onClick={onEditClick}
         className="mt-2 -ml-2 text-muted-foreground"
       >
         <Plus className="size-4" />
@@ -581,11 +526,10 @@ function StatCard({ icon: Icon, label, value, stringValue, unit, accent }: StatC
 type SocialAccountsProps = {
   user: UserPublicProfile;
   isOwner: boolean;
+  onEditClick: () => void;
 };
 
-function SocialAccounts({ user, isOwner }: SocialAccountsProps) {
-  const [editing, setEditing] = useState(false);
-
+function SocialAccounts({ user, isOwner, onEditClick }: SocialAccountsProps) {
   const items: Array<{
     key: 'github' | 'twitter' | 'linkedin';
     username: string;
@@ -616,7 +560,7 @@ function SocialAccounts({ user, isOwner }: SocialAccountsProps) {
       key: 'linkedin',
       username: user.linkedin_username,
       href: `https://www.linkedin.com/in/${user.linkedin_username}`,
-      icon: Linkedin,
+      icon: LinkedinIcon,
       ariaLabel: t.user.social.linkedinAriaLabel(user.linkedin_username),
     });
   }
@@ -626,90 +570,137 @@ function SocialAccounts({ user, isOwner }: SocialAccountsProps) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <span
+        aria-hidden
+        className="mr-1 hidden h-3.5 w-px bg-muted-foreground/50 sm:inline-block"
+      />
       {items.map(({ key, href, username, icon: Icon, ariaLabel }) => (
-        <Tooltip key={key}>
-          <TooltipTrigger asChild>
-            <a
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={ariaLabel}
-              className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              <Icon className="size-3.5" />
-            </a>
-          </TooltipTrigger>
-          <TooltipContent>@{username}</TooltipContent>
-        </Tooltip>
+        <a
+          key={key}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={ariaLabel}
+          className="inline-flex items-center gap-1 rounded-md text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <Icon className="size-3.5" />
+          <span>{username}</span>
+        </a>
       ))}
-      {isOwner ? (
-        items.length > 0 ? (
-          <button
-            type="button"
-            onClick={() => setEditing(true)}
-            aria-label={t.user.social.editAriaLabel}
-            className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <Pencil className="size-3" />
-          </button>
-        ) : (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setEditing(true)}
-            className="-ml-1 h-7 px-2 text-xs text-muted-foreground"
-          >
-            <Plus className="size-3.5" />
-            {t.user.social.addCta}
-          </Button>
-        )
-      ) : null}
-      {isOwner ? (
-        <SocialAccountsDialog
-          open={editing}
-          onOpenChange={setEditing}
-          user={user}
-        />
+      {isOwner && items.length === 0 ? (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onEditClick}
+          className="-ml-1 h-7 px-2 text-xs text-muted-foreground"
+        >
+          <Plus className="size-3.5" />
+          {t.user.social.addCta}
+        </Button>
       ) : null}
     </div>
   );
 }
 
+// ----- Profile edit dialog (자기소개 + SNS 통합) -----
+
 const GITHUB_PATTERN = /^[a-zA-Z0-9-]*$/;
 const TWITTER_PATTERN = /^[a-zA-Z0-9_]*$/;
 const LINKEDIN_PATTERN = /^[a-zA-Z0-9-]*$/;
 
-type SocialAccountsDialogProps = {
+type ProfileEditDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: UserPublicProfile;
 };
 
-function SocialAccountsDialog({ open, onOpenChange, user }: SocialAccountsDialogProps) {
+function ProfileEditDialog({ open, onOpenChange, user }: ProfileEditDialogProps) {
   const queryClient = useQueryClient();
+  const [status, setStatus] = useState(user.status_message ?? '');
   const [github, setGithub] = useState(user.github_username ?? '');
   const [twitter, setTwitter] = useState(user.twitter_username ?? '');
   const [linkedin, setLinkedin] = useState(user.linkedin_username ?? '');
+  // 배경 이미지는 "저장" 누르기 전까지 서버에 반영하지 않습니다.
+  // `coverFile`: 새로 선택한 파일 (있으면 저장 시 업로드)
+  // `coverDeletePending`: 현재 cover 를 제거하기로 표시 (있으면 저장 시 삭제 호출)
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverDeletePending, setCoverDeletePending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+
+  const coverObjectUrl = useMemo(
+    () => (coverFile ? URL.createObjectURL(coverFile) : null),
+    [coverFile],
+  );
+
+  useEffect(() => {
+    if (!coverObjectUrl) return;
+    return () => URL.revokeObjectURL(coverObjectUrl);
+  }, [coverObjectUrl]);
+
+  let coverPreviewUrl: string | null = null;
+  if (coverObjectUrl) {
+    coverPreviewUrl = coverObjectUrl;
+  } else if (!coverDeletePending && user.has_cover_image) {
+    coverPreviewUrl = userImageUrl(user.id, 'cover', user.cover_image_updated_at);
+  }
+  const hasCoverPreview = coverPreviewUrl !== null;
+
+  const handleCoverFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > MAX_IMAGE_BYTES) {
+      toast.error(t.user.image.tooLarge);
+      e.target.value = '';
+      return;
+    }
+    setCoverFile(file);
+    setCoverDeletePending(false);
+    e.target.value = '';
+  };
+
+  const handleCoverDelete = () => {
+    setCoverFile(null);
+    setCoverDeletePending(true);
+  };
 
   useEffect(() => {
     if (open) {
+      setStatus(user.status_message ?? '');
       setGithub(user.github_username ?? '');
       setTwitter(user.twitter_username ?? '');
       setLinkedin(user.linkedin_username ?? '');
+      setCoverFile(null);
+      setCoverDeletePending(false);
       setErrorMessage(null);
     }
-  }, [open, user.github_username, user.twitter_username, user.linkedin_username]);
+  }, [
+    open,
+    user.status_message,
+    user.github_username,
+    user.twitter_username,
+    user.linkedin_username,
+  ]);
 
   const mutation = useMutation({
-    mutationFn: () =>
-      updateSocialAccounts({
+    mutationFn: async () => {
+      // 배경 이미지 → 자기소개 → SNS 순서로 호출. 각 호출의 응답이 동일한 MemberProfile 이므로
+      // 마지막(SNS) 응답이 누적된 모든 변경을 포함합니다.
+      if (coverFile) {
+        await uploadImage('cover', coverFile);
+      } else if (coverDeletePending && user.has_cover_image) {
+        await deleteImage('cover');
+      }
+      const trimmedStatus = status.trim();
+      await updateStatusMessage(trimmedStatus.length === 0 ? null : trimmedStatus);
+      return updateSocialAccounts({
         github: github.trim() || null,
         twitter: twitter.trim() || null,
         linkedin: linkedin.trim() || null,
-      }),
+      });
+    },
     onSuccess: (profile) => {
       queryClient.setQueryData(AUTH_QUERY_KEY, profile);
       queryClient.setQueryData<UserPublicProfile | undefined>(
@@ -718,17 +709,22 @@ function SocialAccountsDialog({ open, onOpenChange, user }: SocialAccountsDialog
           prev
             ? {
                 ...prev,
+                status_message: profile.status_message,
                 github_username: profile.github_username,
                 twitter_username: profile.twitter_username,
                 linkedin_username: profile.linkedin_username,
+                has_cover_image: profile.has_cover_image,
+                cover_image_updated_at: profile.cover_image_updated_at,
               }
             : prev,
       );
-      toast.success(t.user.social.dialog.saved);
+      toast.success(t.user.editProfile.dialog.saved);
       onOpenChange(false);
     },
     onError: (err) => {
-      setErrorMessage(err instanceof ApiError ? err.message : t.user.social.dialog.saveFailed);
+      setErrorMessage(
+        err instanceof ApiError ? err.message : t.user.editProfile.dialog.saveFailed,
+      );
     },
   });
 
@@ -739,15 +735,15 @@ function SocialAccountsDialog({ open, onOpenChange, user }: SocialAccountsDialog
     const trimmedTwitter = twitter.trim();
     const trimmedLinkedin = linkedin.trim();
     if (trimmedGithub && !GITHUB_PATTERN.test(trimmedGithub)) {
-      setErrorMessage(t.user.social.dialog.githubHint);
+      setErrorMessage(t.user.editProfile.dialog.githubHint);
       return;
     }
     if (trimmedTwitter && !TWITTER_PATTERN.test(trimmedTwitter)) {
-      setErrorMessage(t.user.social.dialog.twitterHint);
+      setErrorMessage(t.user.editProfile.dialog.twitterHint);
       return;
     }
     if (trimmedLinkedin && !LINKEDIN_PATTERN.test(trimmedLinkedin)) {
-      setErrorMessage(t.user.social.dialog.linkedinHint);
+      setErrorMessage(t.user.editProfile.dialog.linkedinHint);
       return;
     }
     mutation.mutate();
@@ -757,54 +753,122 @@ function SocialAccountsDialog({ open, onOpenChange, user }: SocialAccountsDialog
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t.user.social.dialog.title}</DialogTitle>
-          <DialogDescription>{t.user.social.dialog.description}</DialogDescription>
+          <DialogTitle>{t.user.editProfile.dialog.title}</DialogTitle>
+          <DialogDescription>{t.user.editProfile.dialog.description}</DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="grid gap-4">
+        <form onSubmit={handleSubmit} className="grid gap-6">
           <div className="grid gap-2">
-            <Label htmlFor="social-github" className="flex items-center gap-2">
+            <Label>{t.user.editProfile.dialog.coverLabel}</Label>
+            <div className="overflow-hidden rounded-md border bg-muted">
+              {coverPreviewUrl ? (
+                <img
+                  src={coverPreviewUrl}
+                  alt=""
+                  className="aspect-[16/5] w-full object-cover"
+                />
+              ) : (
+                <div className="flex aspect-[16/5] w-full items-center justify-center text-xs text-muted-foreground">
+                  {t.user.editProfile.dialog.coverEmpty}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => coverInputRef.current?.click()}
+                disabled={mutation.isPending}
+              >
+                <ImageIcon className="size-4" />
+                {hasCoverPreview ? t.user.image.replace : t.user.image.uploadAction}
+              </Button>
+              {hasCoverPreview ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCoverDelete}
+                  disabled={mutation.isPending}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="size-4" />
+                  {t.user.image.delete}
+                </Button>
+              ) : null}
+            </div>
+            <input
+              ref={coverInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              className="hidden"
+              onChange={handleCoverFile}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="profile-status">{t.user.editProfile.dialog.statusMessageLabel}</Label>
+            <Textarea
+              id="profile-status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              maxLength={STATUS_MAX}
+              rows={3}
+              placeholder={t.user.statusMessage.placeholder}
+            />
+            <span className="text-xs text-muted-foreground">
+              {status.trim().length} / {STATUS_MAX}
+            </span>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="profile-github" className="flex items-center gap-2">
               <Github className="size-4" />
-              {t.user.social.dialog.githubLabel}
+              {t.user.editProfile.dialog.githubLabel}
             </Label>
             <Input
-              id="social-github"
+              id="profile-github"
               value={github}
               onChange={(e) => setGithub(e.target.value)}
               maxLength={39}
-              placeholder={t.user.social.dialog.githubPlaceholder}
+              placeholder={t.user.editProfile.dialog.githubPlaceholder}
               autoComplete="off"
             />
-            <p className="text-xs text-muted-foreground">{t.user.social.dialog.githubHint}</p>
+            <p className="text-xs text-muted-foreground">
+              {t.user.editProfile.dialog.githubHint}
+            </p>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="social-twitter" className="flex items-center gap-2">
+            <Label htmlFor="profile-twitter" className="flex items-center gap-2">
               <Twitter className="size-4" />
-              {t.user.social.dialog.twitterLabel}
+              {t.user.editProfile.dialog.twitterLabel}
             </Label>
             <Input
-              id="social-twitter"
+              id="profile-twitter"
               value={twitter}
               onChange={(e) => setTwitter(e.target.value)}
               maxLength={15}
-              placeholder={t.user.social.dialog.twitterPlaceholder}
+              placeholder={t.user.editProfile.dialog.twitterPlaceholder}
               autoComplete="off"
             />
-            <p className="text-xs text-muted-foreground">{t.user.social.dialog.twitterHint}</p>
+            <p className="text-xs text-muted-foreground">
+              {t.user.editProfile.dialog.twitterHint}
+            </p>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="social-linkedin" className="flex items-center gap-2">
-              <Linkedin className="size-4" />
-              {t.user.social.dialog.linkedinLabel}
+            <Label htmlFor="profile-linkedin" className="flex items-center gap-2">
+              <LinkedinIcon className="size-4" />
+              {t.user.editProfile.dialog.linkedinLabel}
             </Label>
             <Input
-              id="social-linkedin"
+              id="profile-linkedin"
               value={linkedin}
               onChange={(e) => setLinkedin(e.target.value)}
               maxLength={100}
-              placeholder={t.user.social.dialog.linkedinPlaceholder}
+              placeholder={t.user.editProfile.dialog.linkedinPlaceholder}
               autoComplete="off"
             />
-            <p className="text-xs text-muted-foreground">{t.user.social.dialog.linkedinHint}</p>
+            <p className="text-xs text-muted-foreground">
+              {t.user.editProfile.dialog.linkedinHint}
+            </p>
           </div>
           {errorMessage ? (
             <Alert variant="destructive">
@@ -822,7 +886,7 @@ function SocialAccountsDialog({ open, onOpenChange, user }: SocialAccountsDialog
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-              {t.user.social.dialog.submit}
+              {t.user.editProfile.dialog.submit}
             </Button>
           </DialogFooter>
         </form>
