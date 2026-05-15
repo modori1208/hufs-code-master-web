@@ -91,7 +91,7 @@ export function SubmissionFeed({ problemId }: { problemId: number }) {
                     </TableCell>
                     <TableCell>
                       <Link
-                        to={`/users/${encodeURIComponent(s.nickname)}`}
+                        to={`/users/${s.member_id}`}
                         className="font-medium hover:underline"
                       >
                         {s.nickname}

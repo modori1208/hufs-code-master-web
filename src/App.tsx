@@ -88,7 +88,7 @@ export default function App() {
           }
         />
         <Route
-          path="/users/:nickname"
+          path="/users/:id"
           element={
             <RequireAuth>
               <UserPage />

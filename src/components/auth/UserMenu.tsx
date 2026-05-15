@@ -68,9 +68,9 @@ export function UserMenu({ user }: { user: MemberProfile }) {
           className="flex h-9 items-center gap-2 px-2 sm:gap-3 sm:pr-3"
         >
           <Avatar className="size-7">
-            {user.has_profile_image && user.nickname ? (
+            {user.has_profile_image ? (
               <AvatarImage
-                src={userImageUrl(user.nickname, 'profile', user.profile_image_updated_at)}
+                src={userImageUrl(user.id, 'profile', user.profile_image_updated_at)}
                 alt={displayName}
               />
             ) : null}
@@ -93,10 +93,7 @@ export function UserMenu({ user }: { user: MemberProfile }) {
         <DropdownMenuSeparator />
         {user.nickname ? (
           <DropdownMenuItem asChild>
-            <Link
-              to={`/users/${encodeURIComponent(user.nickname)}`}
-              className="cursor-pointer"
-            >
+            <Link to={`/users/${user.id}`} className="cursor-pointer">
               <UserIcon className="size-4" />내 프로필
             </Link>
           </DropdownMenuItem>

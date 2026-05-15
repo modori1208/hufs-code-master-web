@@ -143,10 +143,23 @@ export type MyProblemStatus = {
 };
 
 /**
+ * 잔디(heatmap) 응답. 풀이가 1건 이상인 날짜만 포함됩니다.
+ */
+export type UserHeatmap = {
+  days: Array<{
+    /** ISO local date (YYYY-MM-DD). */
+    date: string;
+    /** 그날 푼 고유 문제 수. */
+    count: number;
+  }>;
+};
+
+/**
  * 채점 현황 등 공개 목록용. 소스 코드는 없고 제출자 이름이 포함됩니다.
  */
 export type PublicSubmission = {
   id: number;
+  member_id: number;
   nickname: string;
   department: string;
   language: Language;
@@ -159,6 +172,7 @@ export type PublicSubmission = {
 // ----- Public profile (다른 사용자) -----
 
 export type UserPublicProfile = {
+  id: number;
   nickname: string;
   department: string;
   role: MemberRole;
@@ -269,4 +283,39 @@ export type BanTemporarilyRequest = {
 
 export type BanPermanentlyRequest = {
   reason?: string | null;
+};
+
+// ----- Admin - Judgehosts -----
+
+export type AdminJudgehost = {
+  id: number;
+  hostname: string;
+  enabled: boolean;
+  last_seen_at: string | null;
+  created_at: string;
+};
+
+// ----- Languages -----
+
+export type LanguageConfig = {
+  language: string;
+  display_name: string;
+  file_extension: string;
+  monaco_language: string;
+  compile_command: string | null;
+  run_command: string;
+  time_factor: number;
+  memory_factor: number;
+  enabled: boolean;
+};
+
+export type UpdateLanguageConfigRequest = {
+  display_name: string;
+  file_extension: string;
+  monaco_language: string;
+  compile_command: string | null;
+  run_command: string;
+  time_factor: number;
+  memory_factor: number;
+  enabled: boolean;
 };

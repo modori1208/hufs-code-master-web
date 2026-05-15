@@ -34,6 +34,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { Container } from '@/components/layout/Container';
+import { Heatmap } from '@/components/profile/Heatmap';
 import { AUTH_QUERY_KEY, useAuth } from '@/hooks/useAuth';
 import { ApiError } from '@/lib/api/client';
 import {
@@ -42,7 +43,7 @@ import {
   uploadImage,
   type ImageKind,
 } from '@/lib/api/me';
-import { getUserByNickname } from '@/lib/api/users';
+import { getUserById } from '@/lib/api/users';
 import { userImageUrl } from '@/lib/image-urls';
 import { cn } from '@/lib/utils';
 import type { UserPublicProfile } from '@/lib/api/types';
@@ -80,16 +81,27 @@ function getInitial(name: string): string {
 }
 
 export function UserPage() {
-  const { nickname: rawNickname } = useParams<{ nickname: string }>();
-  const nickname = rawNickname ? decodeURIComponent(rawNickname) : '';
+  const { id: rawId } = useParams<{ id: string }>();
+  const userId = rawId ? Number(rawId) : NaN;
+  const validId = Number.isFinite(userId) && userId > 0;
   const { user: currentUser } = useAuth();
-  const isOwner = !!currentUser?.nickname && currentUser.nickname === nickname;
+  const isOwner = !!currentUser && validId && currentUser.id === userId;
 
   const query = useQuery({
-    queryKey: ['user', nickname],
-    queryFn: () => getUserByNickname(nickname),
-    enabled: !!nickname,
+    queryKey: ['user', userId],
+    queryFn: () => getUserById(userId),
+    enabled: validId,
   });
+
+  if (!validId) {
+    return (
+      <Container className="py-10">
+        <Alert variant="destructive">
+          <AlertDescription>잘못된 사용자 ID 입니다.</AlertDescription>
+        </Alert>
+      </Container>
+    );
+  }
 
   if (query.isLoading) {
     return (
@@ -116,7 +128,7 @@ export function UserPage() {
         <Alert variant="destructive">
           <AlertDescription>
             {is404
-              ? `"${nickname}" 사용자를 찾을 수 없습니다.`
+              ? '사용자를 찾을 수 없습니다.'
               : '사용자 정보를 불러오지 못했습니다.'}
           </AlertDescription>
         </Alert>
@@ -128,10 +140,10 @@ export function UserPage() {
   if (!user) return null;
 
   const coverUrl = user.has_cover_image
-    ? userImageUrl(nickname, 'cover', user.cover_image_updated_at)
+    ? userImageUrl(user.id, 'cover', user.cover_image_updated_at)
     : null;
   const profileUrl = user.has_profile_image
-    ? userImageUrl(nickname, 'profile', user.profile_image_updated_at)
+    ? userImageUrl(user.id, 'profile', user.profile_image_updated_at)
     : null;
 
   return (
@@ -150,7 +162,7 @@ export function UserPage() {
             <ImageEditMenu
               kind="cover"
               hasImage={user.has_cover_image}
-              nickname={nickname}
+              userId={user.id}
               variant="cover"
             />
           </div>
@@ -172,7 +184,7 @@ export function UserPage() {
                 <ImageEditMenu
                   kind="profile"
                   hasImage={user.has_profile_image}
-                  nickname={nickname}
+                  userId={user.id}
                   variant="profile"
                 />
               </div>
@@ -193,7 +205,7 @@ export function UserPage() {
             </div>
             <p className="mt-1 text-muted-foreground">{user.department}</p>
 
-            <StatusMessage user={user} isOwner={isOwner} nickname={nickname} />
+            <StatusMessage user={user} isOwner={isOwner} userId={user.id} />
 
             <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
               <CalendarDays className="size-3.5" />
@@ -231,6 +243,17 @@ export function UserPage() {
             accent="text-sky-600 dark:text-sky-400"
           />
         </section>
+
+        <section className="mt-8">
+          <Card>
+            <CardHeader>
+              <h2 className="text-lg font-semibold">풀이 잔디</h2>
+            </CardHeader>
+            <CardContent>
+              <Heatmap userId={user.id} />
+            </CardContent>
+          </Card>
+        </section>
       </Container>
     </>
   );
@@ -241,17 +264,17 @@ export function UserPage() {
 type ImageEditMenuProps = {
   kind: ImageKind;
   hasImage: boolean;
-  nickname: string;
+  userId: number;
   /** 'profile' 은 아바타 오른쪽 하단 원형 버튼, 'cover' 는 우상단 직사각형 버튼. */
   variant: 'profile' | 'cover';
 };
 
-function ImageEditMenu({ kind, hasImage, nickname, variant }: ImageEditMenuProps) {
+function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const invalidate = () => {
-    queryClient.invalidateQueries({ queryKey: ['user', nickname] });
+    queryClient.invalidateQueries({ queryKey: ['user', userId] });
   };
 
   const uploadMutation = useMutation({
@@ -364,10 +387,10 @@ function ImageEditMenu({ kind, hasImage, nickname, variant }: ImageEditMenuProps
 type StatusMessageProps = {
   user: UserPublicProfile;
   isOwner: boolean;
-  nickname: string;
+  userId: number;
 };
 
-function StatusMessage({ user, isOwner, nickname }: StatusMessageProps) {
+function StatusMessage({ user, isOwner, userId }: StatusMessageProps) {
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(user.status_message ?? '');
@@ -381,7 +404,7 @@ function StatusMessage({ user, isOwner, nickname }: StatusMessageProps) {
     onSuccess: (profile) => {
       queryClient.setQueryData(AUTH_QUERY_KEY, profile);
       queryClient.setQueryData<UserPublicProfile | undefined>(
-        ['user', nickname],
+        ['user', userId],
         (prev) => (prev ? { ...prev, status_message: profile.status_message } : prev),
       );
       toast.success('상태 메시지가 저장되었습니다.');

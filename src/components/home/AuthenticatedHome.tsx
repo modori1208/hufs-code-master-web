@@ -101,10 +101,7 @@ export function AuthenticatedHome({ user }: { user: MemberProfile }) {
         <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
           환영해요,{' '}
           {user.nickname ? (
-            <Link
-              to={`/users/${encodeURIComponent(user.nickname)}`}
-              className="hover:underline"
-            >
+            <Link to={`/users/${user.id}`} className="hover:underline">
               {user.nickname}
             </Link>
           ) : (

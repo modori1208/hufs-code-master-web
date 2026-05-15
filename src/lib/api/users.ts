@@ -1,9 +1,16 @@
 import { apiGet } from './client';
-import type { UserPublicProfile } from './types';
+import type { UserHeatmap, UserPublicProfile } from './types';
 
 /**
- * 닉네임으로 다른 사용자의 공개 프로필을 조회합니다.
+ * 내부 ID 로 다른 사용자의 공개 프로필을 조회합니다.
  */
-export function getUserByNickname(nickname: string): Promise<UserPublicProfile> {
-  return apiGet<UserPublicProfile>(`/api/v1/users/${encodeURIComponent(nickname)}`);
+export function getUserById(id: number): Promise<UserPublicProfile> {
+  return apiGet<UserPublicProfile>(`/api/v1/users/${id}`);
+}
+
+/**
+ * 사용자 잔디(heatmap). 최근 약 1년치 일별 풀이 카운트.
+ */
+export function getUserHeatmap(id: number): Promise<UserHeatmap> {
+  return apiGet<UserHeatmap>(`/api/v1/users/${id}/heatmap`);
 }
