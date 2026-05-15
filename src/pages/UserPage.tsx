@@ -148,6 +148,20 @@ export function UserPage() {
 
   return (
     <>
+      {/* 차단된 사용자 프로필 — 본인/관리자에게만 도달. 상단에 제한 배너 표시. */}
+      {user.restricted ? (
+        <div className="border-b border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          <Container className="flex items-center gap-2">
+            <Shield className="size-4 shrink-0" />
+            <p>
+              <span className="font-medium">계정이 제한되었습니다.</span>{' '}
+              운영 정책 위반으로 인해 사이트 이용이 제한되었으며 프로필은 본인에게만 표시됩니다.
+              이의 제기를 원하시는 경우 관리자에게 문의해 주세요.
+            </p>
+          </Container>
+        </div>
+      ) : null}
+
       {/* Cover */}
       <div className="relative">
         <div

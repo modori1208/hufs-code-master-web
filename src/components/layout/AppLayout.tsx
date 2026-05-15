@@ -18,7 +18,7 @@ export function AppLayout() {
         </Container>
       </footer>
 
-      {/* 차단된 사용자에게 강제로 뜨는 모달. 로그인은 통과시키되 사이트 사용은 차단합니다. */}
+      {/* 차단된 사용자에게 로그인 시 한 번 띄우는 안내 모달 (닫을 수 있음). */}
       <BannedScreenDialog />
       {/* 닉네임 미설정 사용자에게 강제로 뜨는 모달. */}
       <NicknameSetupDialog />

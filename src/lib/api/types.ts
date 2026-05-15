@@ -187,6 +187,8 @@ export type UserPublicProfile = {
   longest_streak: number;
   weekly_solve_count: number;
   last_solved_date: string | null;
+  /** 차단된 회원 프로필 여부. 본인/관리자만 조회 가능하며 UI 에 제한 배너를 표시합니다. */
+  restricted: boolean;
 };
 
 // ----- Activity -----

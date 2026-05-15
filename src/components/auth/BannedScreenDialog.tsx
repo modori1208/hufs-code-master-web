@@ -1,39 +1,54 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
-import { Ban, Clock, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useEffect, useState } from 'react';
+import { Ban, Clock } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { AUTH_QUERY_KEY, useAuth } from '@/hooks/useAuth';
-import { logout } from '@/lib/api/auth';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
 import type { MemberProfile } from '@/lib/api/types';
 
+const DISMISS_KEY_PREFIX = 'cm:banned-dismissed:';
+
 /**
- * 차단된 사용자에게 강제로 띄우는 모달. 사이트의 어떤 페이지에서도 자동으로 표시되어
- * 인터랙션을 막습니다. 사용자는 로그아웃 외 다른 행동을 할 수 없습니다.
+ * 차단된 사용자에게 로그인 시 한 번 띄우는 안내 모달. ESC·바깥 클릭·닫기 버튼으로 닫을 수 있으며
+ * 같은 세션에서는 재표시되지 않습니다. 둘러보기 자체는 차단하지 않고, 실제 제출 같은 액션만
+ * 서버 측에서 거부됩니다.
  */
 export function BannedScreenDialog() {
   const { user } = useAuth();
-  const open = !!user && isCurrentlyBanned(user);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user || !isCurrentlyBanned(user)) {
+      setOpen(false);
+      return;
+    }
+    const key = DISMISS_KEY_PREFIX + user.id;
+    if (window.sessionStorage.getItem(key) === '1') {
+      return;
+    }
+    setOpen(true);
+  }, [user]);
+
+  const handleClose = (next: boolean) => {
+    if (next || !user) {
+      setOpen(next);
+      return;
+    }
+    window.sessionStorage.setItem(DISMISS_KEY_PREFIX + user.id, '1');
+    setOpen(false);
+  };
 
   return (
-    <Dialog open={open}>
-      <DialogContent
-        showCloseButton={false}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onInteractOutside={(e) => e.preventDefault()}
-        className="max-w-md"
-      >
-        {user ? <BannedContent user={user} /> : null}
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="max-w-md">
+        {user ? <BannedContent user={user} onClose={() => handleClose(false)} /> : null}
       </DialogContent>
     </Dialog>
   );
@@ -53,25 +68,7 @@ function formatDateTime(iso: string): string {
   }
 }
 
-function BannedContent({ user }: { user: MemberProfile }) {
-  const [busy, setBusy] = useState(false);
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    if (busy) return;
-    setBusy(true);
-    try {
-      await logout();
-    } catch {
-      toast.error('로그아웃에 실패했습니다.');
-    } finally {
-      queryClient.setQueryData(AUTH_QUERY_KEY, null);
-      navigate('/');
-      setBusy(false);
-    }
-  };
-
+function BannedContent({ user, onClose }: { user: MemberProfile; onClose: () => void }) {
   const isPermanent = user.banned_permanently;
   const until = user.banned_until;
 
@@ -81,13 +78,11 @@ function BannedContent({ user }: { user: MemberProfile }) {
         <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
           <Ban className="size-6" />
         </div>
-        <DialogTitle className="text-center">
-          계정이 차단되었습니다
-        </DialogTitle>
+        <DialogTitle className="text-center">계정이 제한된 상태입니다</DialogTitle>
         <DialogDescription className="text-center">
           {isPermanent
-            ? '이 계정은 무기한 차단되었습니다.'
-            : '이 계정은 일정 기간 동안 차단되었습니다.'}
+            ? '운영 정책 위반으로 이 계정은 영구 제한되었습니다.'
+            : '운영 정책 위반으로 이 계정은 일시 제한되었습니다.'}
         </DialogDescription>
       </DialogHeader>
 
@@ -95,7 +90,7 @@ function BannedContent({ user }: { user: MemberProfile }) {
         {!isPermanent && until ? (
           <div className="flex items-center gap-2 rounded-md border border-border bg-muted/30 px-3 py-2 text-sm">
             <Clock className="size-4 text-muted-foreground" />
-            <span className="text-muted-foreground">차단 해제 예정:</span>
+            <span className="text-muted-foreground">제한 해제 예정:</span>
             <span className="font-medium">{formatDateTime(until)}</span>
           </div>
         ) : null}
@@ -112,17 +107,13 @@ function BannedContent({ user }: { user: MemberProfile }) {
         <p className="text-center text-xs text-muted-foreground">
           이의가 있는 경우 운영자에게 문의하세요.
         </p>
-
-        <Button
-          variant="outline"
-          onClick={handleLogout}
-          disabled={busy}
-          className="w-full"
-        >
-          {busy ? <Loader2 className="size-4 animate-spin" /> : null}
-          로그아웃
-        </Button>
       </div>
+
+      <DialogFooter>
+        <Button variant="outline" onClick={onClose} className="w-full">
+          확인
+        </Button>
+      </DialogFooter>
     </>
   );
 }
