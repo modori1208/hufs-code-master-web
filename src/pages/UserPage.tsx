@@ -108,7 +108,7 @@ export function UserPage() {
   if (query.isLoading) {
     return (
       <>
-        <Skeleton className="h-48 w-full md:h-64" />
+        <Skeleton className="h-64 w-full md:h-96" />
         <Container className="pb-10">
           <Skeleton className="-mt-14 size-28 rounded-full md:-mt-16 md:size-32" />
           <Skeleton className="mt-4 h-9 w-48" />
@@ -178,7 +178,7 @@ export function UserPage() {
       <div className="relative">
         <div
           className={cn(
-            'h-48 w-full bg-gradient-to-br from-muted to-muted/40 md:h-64',
+            'h-64 w-full bg-gradient-to-br from-muted to-muted/40 md:h-96',
             coverUrl ? 'bg-cover bg-center' : '',
           )}
           style={coverUrl ? { backgroundImage: `url(${coverUrl})` } : undefined}
@@ -233,7 +233,7 @@ export function UserPage() {
 
             <StatusMessage user={user} isOwner={isOwner} userId={user.id} />
 
-            <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <p className="mt-3 flex w-fit items-center gap-1.5 text-xs text-muted-foreground">
               <CalendarDays className="size-3.5" />
               가입일: {formatDate(user.joined_at)}
             </p>
