@@ -6,6 +6,7 @@ import { getUserHeatmap } from '@/lib/api/users';
 import { cn } from '@/lib/utils';
 
 const WEEKS = 53;
+const MOBILE_WEEKS = 12;
 const DAYS_PER_WEEK = 7;
 
 /** count 를 0~4 level 로 매핑. */
@@ -61,15 +62,31 @@ export function Heatmap({ userId }: { userId: number }) {
     staleTime: 5 * 60 * 1000,
   });
 
-  const { weeks, today, countByDate, totalCount, activeDays } = useMemo(() => {
+  const {
+    weeks,
+    today,
+    countByDate,
+    totalCount,
+    activeDays,
+    mobileTotalCount,
+    mobileActiveDays,
+  } = useMemo(() => {
     const grid = buildGrid();
     const map = new Map<string, number>();
+    // 모바일에서 보이는 마지막 MOBILE_WEEKS 주의 시작 날짜. 이 날짜 이상인 활동만 모바일 합계에 포함.
+    const mobileStartKey = fmtDate(grid.weeks[grid.weeks.length - MOBILE_WEEKS][0]);
     let total = 0;
     let active = 0;
+    let mobileTotal = 0;
+    let mobileActive = 0;
     (query.data?.days ?? []).forEach((d) => {
       map.set(d.date, d.count);
       total += d.count;
       if (d.count > 0) active += 1;
+      if (d.date >= mobileStartKey) {
+        mobileTotal += d.count;
+        if (d.count > 0) mobileActive += 1;
+      }
     });
     return {
       weeks: grid.weeks,
@@ -77,6 +94,8 @@ export function Heatmap({ userId }: { userId: number }) {
       countByDate: map,
       totalCount: total,
       activeDays: active,
+      mobileTotalCount: mobileTotal,
+      mobileActiveDays: mobileActive,
     };
   }, [query.data]);
 
@@ -93,7 +112,15 @@ export function Heatmap({ userId }: { userId: number }) {
   return (
     <div className="space-y-3">
       <div className="flex items-baseline justify-between text-sm">
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground sm:hidden">
+          {t.user.heatmap.summaryPrefixMobile}
+          <br />
+          <span className="font-medium text-foreground">{mobileTotalCount}</span>
+          {t.user.heatmap.summaryProblemsUnit}
+          <span className="font-medium text-foreground">{mobileActiveDays}</span>
+          {t.user.heatmap.summaryDaysUnit}
+        </p>
+        <p className="hidden text-muted-foreground sm:block">
           {t.user.heatmap.summaryPrefix}
           <span className="font-medium text-foreground">{totalCount}</span>
           {t.user.heatmap.summaryProblemsUnit}
@@ -104,8 +131,16 @@ export function Heatmap({ userId }: { userId: number }) {
       </div>
       <div className="overflow-x-auto">
         <div className="flex gap-[3px]" role="img" aria-label={t.user.heatmap.ariaLabel}>
-          {weeks.map((week, wIdx) => (
-            <div key={wIdx} className="flex flex-col gap-[3px]">
+          {weeks.map((week, wIdx) => {
+            const visibleOnMobile = wIdx >= weeks.length - MOBILE_WEEKS;
+            return (
+            <div
+              key={wIdx}
+              className={cn(
+                'flex-col gap-[3px]',
+                visibleOnMobile ? 'flex' : 'hidden sm:flex',
+              )}
+            >
               {week.map((day) => {
                 const future = day.getTime() > today.getTime();
                 const key = fmtDate(day);
@@ -130,7 +165,8 @@ export function Heatmap({ userId }: { userId: number }) {
                 );
               })}
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

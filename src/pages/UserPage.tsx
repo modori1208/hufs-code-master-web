@@ -338,7 +338,7 @@ export function UserPage() {
         </section>
 
         <section className="mt-8">
-          <Card>
+          <Card className="gap-1 sm:gap-3">
             <CardHeader>
               <h2 className="text-lg font-semibold">{t.user.heatmap.title}</h2>
             </CardHeader>

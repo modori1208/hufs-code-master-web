@@ -305,6 +305,7 @@ export const ko = {
       summaryProblemsUnit: ' 문제 · ',
       summaryDaysUnit: '일 활동',
       summaryPrefix: '최근 1년 동안 ',
+      summaryPrefixMobile: '최근 3개월 동안 ',
       loadFailed: '잔디를 불러오지 못했습니다.',
       legendLow: '적음',
       legendHigh: '많음',
