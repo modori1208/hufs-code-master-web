@@ -36,6 +36,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Container } from '@/components/layout/Container';
 import { Heatmap } from '@/components/profile/Heatmap';
 import { AUTH_QUERY_KEY, useAuth } from '@/hooks/useAuth';
+import { t } from '@/i18n';
 import { ApiError } from '@/lib/api/client';
 import {
   deleteImage,
@@ -53,7 +54,7 @@ const STATUS_MAX = 200;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 function formatDate(iso: string | null): string {
-  if (!iso) return '아직 없음';
+  if (!iso) return t.common.none;
   try {
     return new Date(iso).toLocaleDateString('ko-KR', {
       year: 'numeric',
@@ -66,15 +67,15 @@ function formatDate(iso: string | null): string {
 }
 
 function daysAgo(dateStr: string | null): string {
-  if (!dateStr) return '아직 없음';
+  if (!dateStr) return t.common.none;
   const last = new Date(dateStr);
   const today = new Date();
   const lastUtc = Date.UTC(last.getFullYear(), last.getMonth(), last.getDate());
   const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
   const diff = Math.round((todayUtc - lastUtc) / (1000 * 60 * 60 * 24));
-  if (diff === 0) return '오늘';
-  if (diff === 1) return '어제';
-  return `${diff}일 전`;
+  if (diff === 0) return t.common.today;
+  if (diff === 1) return t.common.yesterday;
+  return t.common.daysAgo(diff);
 }
 
 function getInitial(name: string): string {
@@ -99,7 +100,7 @@ export function UserPage() {
     return (
       <Container className="py-10">
         <Alert variant="destructive">
-          <AlertDescription>잘못된 사용자 ID 입니다.</AlertDescription>
+          <AlertDescription>{t.user.invalidId}</AlertDescription>
         </Alert>
       </Container>
     );
@@ -129,9 +130,7 @@ export function UserPage() {
       <Container className="py-10">
         <Alert variant="destructive">
           <AlertDescription>
-            {is404
-              ? '사용자를 찾을 수 없습니다.'
-              : '사용자 정보를 불러오지 못했습니다.'}
+            {is404 ? t.user.notFound : t.user.loadFailed}
           </AlertDescription>
         </Alert>
       </Container>
@@ -167,8 +166,8 @@ export function UserPage() {
           <Container className="flex items-center gap-2">
             <Shield className="size-4 shrink-0" />
             <p>
-              <span className="font-medium">계정이 제한되었습니다.</span>{' '}
-              운영 정책 위반으로 인해 사이트 이용이 제한되었으며 프로필은 본인에게만 표시됩니다.
+              <span className="font-medium">{t.auth.restrictedBanner.title}</span>{' '}
+              {t.auth.restrictedBanner.description}
             </p>
           </Container>
         </button>
@@ -225,7 +224,7 @@ export function UserPage() {
               {user.role === 'ADMIN' ? (
                 <Badge variant="secondary" className="gap-1">
                   <Shield className="size-3" />
-                  관리자
+                  {t.user.adminBadge}
                 </Badge>
               ) : null}
             </div>
@@ -235,7 +234,7 @@ export function UserPage() {
 
             <p className="mt-3 flex w-fit items-center gap-1.5 text-xs text-muted-foreground">
               <CalendarDays className="size-3.5" />
-              가입일: {formatDate(user.joined_at)}
+              {t.user.joinedAt(formatDate(user.joined_at))}
             </p>
           </div>
         </header>
@@ -243,28 +242,28 @@ export function UserPage() {
         <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon={Flame}
-            label="현재 스트릭"
+            label={t.user.stats.currentStreak}
             value={user.current_streak}
-            unit="일"
+            unit={t.user.stats.days}
             accent="text-orange-600 dark:text-orange-400"
           />
           <StatCard
             icon={Trophy}
-            label="최장 스트릭"
+            label={t.user.stats.longestStreak}
             value={user.longest_streak}
-            unit="일"
+            unit={t.user.stats.days}
             accent="text-amber-600 dark:text-amber-400"
           />
           <StatCard
             icon={ListChecks}
-            label="이번 주 풀이"
+            label={t.user.stats.weeklySolve}
             value={user.weekly_solve_count}
-            unit="문제"
+            unit={t.user.stats.problems}
             accent="text-emerald-600 dark:text-emerald-400"
           />
           <StatCard
             icon={Clock}
-            label="마지막 풀이"
+            label={t.user.stats.lastSolved}
             stringValue={daysAgo(user.last_solved_date)}
             accent="text-sky-600 dark:text-sky-400"
           />
@@ -273,7 +272,7 @@ export function UserPage() {
         <section className="mt-8">
           <Card>
             <CardHeader>
-              <h2 className="text-lg font-semibold">풀이 잔디</h2>
+              <h2 className="text-lg font-semibold">{t.user.heatmap.title}</h2>
             </CardHeader>
             <CardContent>
               <Heatmap userId={user.id} />
@@ -308,9 +307,11 @@ function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) 
     onSuccess: (profile) => {
       queryClient.setQueryData(AUTH_QUERY_KEY, profile);
       invalidate();
-      toast.success(`${kind === 'profile' ? '프로필' : '배경'} 이미지가 업로드되었습니다.`);
+      toast.success(
+        kind === 'profile' ? t.user.image.profileUploaded : t.user.image.coverUploaded,
+      );
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : '업로드 실패'),
+    onError: (err) => toast.error(err instanceof Error ? err.message : t.user.image.uploadFailed),
   });
 
   const deleteMutation = useMutation({
@@ -318,16 +319,16 @@ function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) 
     onSuccess: (profile) => {
       queryClient.setQueryData(AUTH_QUERY_KEY, profile);
       invalidate();
-      toast.success('이미지가 삭제되었습니다.');
+      toast.success(t.user.image.deleted);
     },
-    onError: () => toast.error('삭제에 실패했습니다.'),
+    onError: () => toast.error(t.user.image.deleteFailed),
   });
 
   const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > MAX_IMAGE_BYTES) {
-      toast.error('5MB 이하의 파일만 업로드 가능합니다.');
+      toast.error(t.user.image.tooLarge);
       e.target.value = '';
       return;
     }
@@ -336,7 +337,7 @@ function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) 
   };
 
   const handleDelete = () => {
-    if (window.confirm('이미지를 삭제할까요?')) {
+    if (window.confirm(t.user.image.deleteConfirm)) {
       deleteMutation.mutate();
     }
   };
@@ -360,7 +361,7 @@ function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) 
               size="icon"
               className="size-9 rounded-full border-2 border-background shadow-md"
               disabled={pending}
-              aria-label="프로필 이미지 변경"
+              aria-label={t.user.image.profileAriaLabel}
             >
               {pending ? (
                 <Loader2 className="size-4 animate-spin" />
@@ -381,7 +382,7 @@ function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) 
               ) : (
                 <ImageIcon className="size-4" />
               )}
-              배경
+              {t.user.image.coverButton}
             </Button>
           )}
         </DropdownMenuTrigger>
@@ -391,7 +392,7 @@ function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) 
             className="cursor-pointer"
           >
             <Camera className="size-4" />
-            {hasImage ? '이미지 교체' : '이미지 업로드'}
+            {hasImage ? t.user.image.replace : t.user.image.uploadAction}
           </DropdownMenuItem>
           {hasImage ? (
             <DropdownMenuItem
@@ -399,7 +400,7 @@ function ImageEditMenu({ kind, hasImage, userId, variant }: ImageEditMenuProps) 
               className="cursor-pointer text-destructive focus:text-destructive"
             >
               <Trash2 className="size-4" />
-              삭제
+              {t.user.image.delete}
             </DropdownMenuItem>
           ) : null}
         </DropdownMenuContent>
@@ -433,11 +434,11 @@ function StatusMessage({ user, isOwner, userId }: StatusMessageProps) {
         ['user', userId],
         (prev) => (prev ? { ...prev, status_message: profile.status_message } : prev),
       );
-      toast.success('상태 메시지가 저장되었습니다.');
+      toast.success(t.user.statusMessage.saved);
       setEditing(false);
     },
     onError: (err) => {
-      const msg = err instanceof ApiError ? err.message : '저장에 실패했습니다.';
+      const msg = err instanceof ApiError ? err.message : t.user.statusMessage.saveFailed;
       toast.error(msg);
     },
   });
@@ -462,7 +463,7 @@ function StatusMessage({ user, isOwner, userId }: StatusMessageProps) {
           onChange={(e) => setDraft(e.target.value)}
           maxLength={STATUS_MAX}
           rows={3}
-          placeholder="예: 알고리즘 공부 중인 23학번입니다."
+          placeholder={t.user.statusMessage.placeholder}
         />
         <div className="mt-2 flex items-center justify-between">
           <span className="text-xs text-muted-foreground">
@@ -470,11 +471,11 @@ function StatusMessage({ user, isOwner, userId }: StatusMessageProps) {
           </span>
           <div className="flex gap-2">
             <Button type="button" variant="ghost" size="sm" onClick={handleCancel}>
-              취소
+              {t.common.cancel}
             </Button>
             <Button type="submit" size="sm" disabled={mutation.isPending}>
               {mutation.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
-              저장
+              {t.common.save}
             </Button>
           </div>
         </div>
@@ -495,7 +496,7 @@ function StatusMessage({ user, isOwner, userId }: StatusMessageProps) {
             size="icon"
             onClick={() => setEditing(true)}
             className="opacity-0 transition-opacity group-hover/status:opacity-100"
-            aria-label="편집"
+            aria-label={t.user.statusMessage.editAriaLabel}
           >
             <Pencil className="size-4" />
           </Button>
@@ -514,7 +515,7 @@ function StatusMessage({ user, isOwner, userId }: StatusMessageProps) {
         className="mt-2 -ml-2 text-muted-foreground"
       >
         <Plus className="size-4" />
-        자기소개 추가
+        {t.user.statusMessage.addCta}
       </Button>
     );
   }

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import { t } from '@/i18n';
 import { getUserHeatmap } from '@/lib/api/users';
 import { cn } from '@/lib/utils';
 
@@ -85,7 +86,7 @@ export function Heatmap({ userId }: { userId: number }) {
 
   if (query.isError) {
     return (
-      <p className="text-sm text-muted-foreground">잔디를 불러오지 못했습니다.</p>
+      <p className="text-sm text-muted-foreground">{t.user.heatmap.loadFailed}</p>
     );
   }
 
@@ -93,13 +94,16 @@ export function Heatmap({ userId }: { userId: number }) {
     <div className="space-y-3">
       <div className="flex items-baseline justify-between text-sm">
         <p className="text-muted-foreground">
-          최근 1년 동안 <span className="font-medium text-foreground">{totalCount}</span> 문제 ·{' '}
-          <span className="font-medium text-foreground">{activeDays}</span>일 활동
+          {t.user.heatmap.summaryPrefix}
+          <span className="font-medium text-foreground">{totalCount}</span>
+          {t.user.heatmap.summaryProblemsUnit}
+          <span className="font-medium text-foreground">{activeDays}</span>
+          {t.user.heatmap.summaryDaysUnit}
         </p>
         <Legend />
       </div>
       <div className="overflow-x-auto">
-        <div className="flex gap-[3px]" role="img" aria-label="풀이 잔디">
+        <div className="flex gap-[3px]" role="img" aria-label={t.user.heatmap.ariaLabel}>
           {weeks.map((week, wIdx) => (
             <div key={wIdx} className="flex flex-col gap-[3px]">
               {week.map((day) => {
@@ -114,8 +118,8 @@ export function Heatmap({ userId }: { userId: number }) {
                       future
                         ? key
                         : count > 0
-                          ? `${key} · ${count}문제`
-                          : `${key} · 활동 없음`
+                          ? t.user.heatmap.tooltipActive(key, count)
+                          : t.user.heatmap.tooltipEmpty(key)
                     }
                     className={cn(
                       'size-[11px] rounded-sm',
@@ -136,7 +140,7 @@ export function Heatmap({ userId }: { userId: number }) {
 function Legend() {
   return (
     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-      <span>적음</span>
+      <span>{t.user.heatmap.legendLow}</span>
       <div className="flex gap-[3px]">
         {[0, 1, 2, 3, 4].map((l) => (
           <div
@@ -145,7 +149,7 @@ function Legend() {
           />
         ))}
       </div>
-      <span>많음</span>
+      <span>{t.user.heatmap.legendHigh}</span>
     </div>
   );
 }

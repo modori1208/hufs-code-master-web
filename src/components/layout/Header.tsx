@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { AuthArea } from '@/components/auth/AuthArea';
 import { useAuth } from '@/hooks/useAuth';
+import { t } from '@/i18n';
 import { cn } from '@/lib/utils';
 import { Container } from './Container';
 
@@ -35,15 +36,15 @@ export function Header() {
           className="mr-8 flex items-center gap-2 font-semibold tracking-tight"
         >
           <span className="rounded-md bg-primary px-2 py-0.5 text-xs text-primary-foreground">
-            CM
+            {t.layout.brandShort}
           </span>
-          <span className="hidden text-base sm:inline">HUFS CODE MASTER</span>
+          <span className="hidden text-base sm:inline">{t.layout.brandFull}</span>
         </Link>
         {isAuthenticated ? (
           <nav className="flex items-center gap-1">
-            <NavItem to="/problems">문제</NavItem>
-            <NavItem to="/tracks">트랙</NavItem>
-            <NavItem to="/submissions">내 제출</NavItem>
+            <NavItem to="/problems">{t.layout.nav.problems}</NavItem>
+            <NavItem to="/tracks">{t.layout.nav.tracks}</NavItem>
+            <NavItem to="/submissions">{t.layout.nav.submissions}</NavItem>
           </nav>
         ) : null}
         <div className="ml-auto flex items-center gap-2">

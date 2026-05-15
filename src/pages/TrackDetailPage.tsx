@@ -16,6 +16,7 @@ import { Container } from '@/components/layout/Container';
 import { Markdown } from '@/components/Markdown';
 import { ProblemStatusIcon } from '@/components/problem/ProblemStatusIcon';
 import { useMyProblemStatus } from '@/hooks/useMyProblemStatus';
+import { t } from '@/i18n';
 import { getTrack } from '@/lib/api/tracks';
 import { DIFFICULTY_BADGE, DIFFICULTY_LABEL } from '@/lib/labels';
 import { cn } from '@/lib/utils';
@@ -45,7 +46,7 @@ export function TrackDetailPage() {
     return (
       <Container className="py-10">
         <Alert variant="destructive">
-          <AlertDescription>트랙을 불러올 수 없습니다.</AlertDescription>
+          <AlertDescription>{t.tracks.detail.loadFailed}</AlertDescription>
         </Alert>
       </Container>
     );
@@ -65,15 +66,15 @@ export function TrackDetailPage() {
       <Separator className="my-8" />
 
       <section>
-        <h2 className="text-xl font-semibold">문제 목록</h2>
+        <h2 className="text-xl font-semibold">{t.tracks.detail.problems}</h2>
         <div className="mt-4 overflow-hidden rounded-lg border border-border">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead className="w-10"></TableHead>
-                <TableHead className="w-20">#</TableHead>
-                <TableHead>제목</TableHead>
-                <TableHead className="w-32">난이도</TableHead>
+                <TableHead className="w-20">{t.problems.columns.id}</TableHead>
+                <TableHead>{t.problems.columns.title}</TableHead>
+                <TableHead className="w-32">{t.problems.columns.difficulty}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -107,7 +108,7 @@ export function TrackDetailPage() {
               ) : (
                 <TableRow>
                   <TableCell colSpan={4} className="py-10 text-center text-muted-foreground">
-                    이 트랙에 등록된 문제가 없습니다.
+                    {t.tracks.detail.empty}
                   </TableCell>
                 </TableRow>
               )}

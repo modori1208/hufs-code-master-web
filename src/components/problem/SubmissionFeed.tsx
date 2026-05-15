@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { t } from '@/i18n';
 import { listProblemSubmissions } from '@/lib/api/problems';
 import { isFirstPage, isLastPage } from '@/lib/api/types';
 import { LANGUAGE_LABEL, VERDICT_BADGE, VERDICT_LABEL } from '@/lib/labels';
@@ -53,13 +54,13 @@ export function SubmissionFeed({ problemId }: { problemId: number }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-20">#</TableHead>
-              <TableHead>제출자</TableHead>
-              <TableHead className="w-28">언어</TableHead>
-              <TableHead className="w-40">결과</TableHead>
-              <TableHead className="w-24 text-right">실행시간</TableHead>
-              <TableHead className="w-24 text-right">메모리</TableHead>
-              <TableHead className="w-44">시각</TableHead>
+              <TableHead className="w-20">{t.submissions.feedColumns.id}</TableHead>
+              <TableHead>{t.submissions.feedColumns.member}</TableHead>
+              <TableHead className="w-28">{t.submissions.feedColumns.language}</TableHead>
+              <TableHead className="w-40">{t.submissions.feedColumns.verdict}</TableHead>
+              <TableHead className="w-24 text-right">{t.submissions.feedColumns.runtime}</TableHead>
+              <TableHead className="w-24 text-right">{t.submissions.feedColumns.memory}</TableHead>
+              <TableHead className="w-44">{t.submissions.feedColumns.time}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -76,7 +77,7 @@ export function SubmissionFeed({ problemId }: { problemId: number }) {
                 <TableCell colSpan={7}>
                   <Alert variant="destructive">
                     <AlertDescription>
-                      채점 현황을 불러오지 못했습니다.
+                      {t.submissions.feedLoadFailed}
                     </AlertDescription>
                   </Alert>
                 </TableCell>
@@ -133,7 +134,7 @@ export function SubmissionFeed({ problemId }: { problemId: number }) {
                   colSpan={7}
                   className="py-10 text-center text-muted-foreground"
                 >
-                  아직 이 문제의 제출 내역이 없습니다.
+                  {t.submissions.feedEmpty}
                 </TableCell>
               </TableRow>
             )}
@@ -144,8 +145,12 @@ export function SubmissionFeed({ problemId }: { problemId: number }) {
       {query.data && query.data.page.total_pages > 1 ? (
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <p>
-            {query.data.page.number + 1} / {query.data.page.total_pages} 페이지 (총{' '}
-            {query.data.page.total_elements}개)
+            {t.common.pageOf(
+              query.data.page.number + 1,
+              query.data.page.total_pages,
+              query.data.page.total_elements,
+              t.submissions.countUnit,
+            )}
           </p>
           <div className="flex gap-2">
             <Button
@@ -154,7 +159,7 @@ export function SubmissionFeed({ problemId }: { problemId: number }) {
               disabled={isFirstPage(query.data)}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
-              이전
+              {t.common.previous}
             </Button>
             <Button
               variant="outline"
@@ -162,7 +167,7 @@ export function SubmissionFeed({ problemId }: { problemId: number }) {
               disabled={isLastPage(query.data)}
               onClick={() => setPage((p) => p + 1)}
             >
-              다음
+              {t.common.next}
             </Button>
           </div>
         </div>

@@ -1,13 +1,15 @@
-import type { Difficulty, Language, SubmissionVerdict } from '@/lib/api/types';
+import type { Difficulty, SubmissionVerdict } from '@/lib/api/types';
+import { t } from '@/i18n';
 
-export const DIFFICULTY_LABEL: Record<Difficulty, string> = {
-  BRONZE: '브론즈',
-  SILVER: '실버',
-  GOLD: '골드',
-  PLATINUM: '플래티넘',
-  DIAMOND: '다이아',
-  RUBY: '루비',
-};
+/**
+ * 도메인 enum 별 사용자 노출 라벨.
+ *
+ * <p>실제 문자열은 i18n 사전({@link t})에서 가져오고, 여기는 단순히 재export 합니다.
+ * 색상 등 UI 토큰은 라벨이 아니므로 이 파일에 그대로 둡니다 (locale 무관).
+ */
+export const DIFFICULTY_LABEL = t.difficulty;
+export const LANGUAGE_LABEL = t.language;
+export const VERDICT_LABEL = t.verdict;
 
 /**
  * 난이도별 Badge 색상 (Tailwind class).
@@ -19,26 +21,6 @@ export const DIFFICULTY_BADGE: Record<Difficulty, string> = {
   PLATINUM: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
   DIAMOND: 'bg-sky-500/15 text-sky-600 dark:text-sky-400',
   RUBY: 'bg-rose-500/15 text-rose-600 dark:text-rose-400',
-};
-
-export const LANGUAGE_LABEL: Record<Language, string> = {
-  C: 'C',
-  CPP: 'C++',
-  JAVA: 'Java',
-  PYTHON3: 'Python 3',
-};
-
-export const VERDICT_LABEL: Record<SubmissionVerdict, string> = {
-  PENDING: '대기 중',
-  JUDGING: '채점 중',
-  ACCEPTED: '맞았습니다',
-  WRONG_ANSWER: '틀렸습니다',
-  TIME_LIMIT_EXCEEDED: '시간 초과',
-  MEMORY_LIMIT_EXCEEDED: '메모리 초과',
-  OUTPUT_LIMIT_EXCEEDED: '출력 초과',
-  RUNTIME_ERROR: '런타임 에러',
-  COMPILE_ERROR: '컴파일 에러',
-  JUDGEMENT_ERROR: '채점 오류',
 };
 
 export const VERDICT_BADGE: Record<SubmissionVerdict, string> = {

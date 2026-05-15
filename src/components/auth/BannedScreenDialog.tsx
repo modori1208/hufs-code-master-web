@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { t } from '@/i18n';
 import { useBannedDialog } from '@/stores/bannedDialog';
 import type { MemberProfile } from '@/lib/api/types';
 
@@ -91,9 +92,11 @@ function BannedContent({ user, onClose }: { user: MemberProfile; onClose: () => 
         <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-destructive/10 text-destructive">
           <Ban className="size-6" />
         </div>
-        <DialogTitle className="text-center">계정이 제한된 상태입니다</DialogTitle>
+        <DialogTitle className="text-center">{t.auth.bannedDialog.title}</DialogTitle>
         <DialogDescription className="text-center">
-          운영 정책 위반으로 이 계정은 {isPermanent ? '영구' : '일시'} 제한되었습니다.
+          {isPermanent
+            ? t.auth.bannedDialog.descriptionPermanent
+            : t.auth.bannedDialog.descriptionTemporary}
         </DialogDescription>
       </DialogHeader>
 
@@ -101,14 +104,14 @@ function BannedContent({ user, onClose }: { user: MemberProfile; onClose: () => 
         {!isPermanent && until ? (
           <div className="flex items-center gap-2 rounded-md border border-border bg-muted/30 px-3 py-2 text-sm">
             <Clock className="size-4 text-muted-foreground" />
-            <span className="text-muted-foreground">제한 해제 예정:</span>
+            <span className="text-muted-foreground">{t.auth.bannedDialog.releaseAt}</span>
             <span className="font-medium">{formatDateTime(until)}</span>
           </div>
         ) : null}
 
         {user.ban_reason ? (
           <Alert>
-            <AlertTitle>사유</AlertTitle>
+            <AlertTitle>{t.auth.bannedDialog.reasonTitle}</AlertTitle>
             <AlertDescription className="whitespace-pre-wrap">
               {user.ban_reason}
             </AlertDescription>
@@ -116,13 +119,13 @@ function BannedContent({ user, onClose }: { user: MemberProfile; onClose: () => 
         ) : null}
 
         <p className="text-center text-xs text-muted-foreground">
-          이의 제기를 원하는 경우 관리자에게 문의하세요.
+          {t.auth.bannedDialog.contact}
         </p>
       </div>
 
       <DialogFooter>
         <Button variant="outline" onClick={onClose} className="w-full">
-          확인
+          {t.common.confirm}
         </Button>
       </DialogFooter>
     </>

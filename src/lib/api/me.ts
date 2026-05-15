@@ -1,5 +1,6 @@
 import { apiDelete, apiPut } from './client';
 import { config } from '@/lib/config';
+import { t } from '@/i18n';
 import type { MemberProfile } from './types';
 
 /**
@@ -36,7 +37,7 @@ export async function uploadImage(
   });
   const body = await response.json();
   if (!response.ok) {
-    throw new Error(body?.message ?? '이미지 업로드 실패');
+    throw new Error(body?.message ?? t.user.image.uploadFailed);
   }
   return body.data as MemberProfile;
 }

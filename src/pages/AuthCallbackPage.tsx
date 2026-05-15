@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { Container } from '@/components/layout/Container';
 import { AUTH_QUERY_KEY } from '@/hooks/useAuth';
+import { t } from '@/i18n';
 import { consumeSsoState, exchangeCode } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
 
@@ -65,7 +66,7 @@ export function AuthCallbackPage() {
   return (
     <Container className="flex items-center justify-center py-32 text-muted-foreground">
       <Loader2 className="mr-2 size-5 animate-spin" />
-      로그인 처리 중...
+      {t.auth.callbackProcessing}
     </Container>
   );
 }

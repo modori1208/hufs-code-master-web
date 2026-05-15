@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Container } from '@/components/layout/Container';
 import { RequireAuth } from '@/components/auth/RequireAuth';
+import { t } from '@/i18n';
 import { AuthCallbackPage } from '@/pages/AuthCallbackPage';
 import { HomePage } from '@/pages/HomePage';
 import { LoginPage } from '@/pages/LoginPage';
@@ -24,7 +25,7 @@ function AdminFallback() {
   return (
     <Container className="flex items-center justify-center py-32 text-muted-foreground">
       <Loader2 className="mr-2 size-5 animate-spin" />
-      불러오는 중...
+      {t.common.loading}
     </Container>
   );
 }

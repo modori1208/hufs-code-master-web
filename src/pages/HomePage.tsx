@@ -11,24 +11,23 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
+import { t } from '@/i18n';
 
 const features = [
   {
     icon: ListChecks,
-    title: '트랙 학습',
-    description:
-      '난이도별로 정리된 학습 트랙을 따라 차근차근 실력을 쌓아보세요.',
+    title: t.home.landing.features.tracks.title,
+    description: t.home.landing.features.tracks.description,
   },
   {
     icon: Flame,
-    title: '주간 스트릭',
-    description:
-      '매주 갱신되는 풀이 카운트와 연속 풀이일로 동기 부여를 받으세요.',
+    title: t.home.landing.features.streak.title,
+    description: t.home.landing.features.streak.description,
   },
   {
     icon: Sparkles,
-    title: 'AI 어시스턴트',
-    description: '막힌 문제는 사이트 내 AI 어시스턴트와 함께 풀어나가세요.',
+    title: t.home.landing.features.ai.title,
+    description: t.home.landing.features.ai.description,
   },
 ];
 
@@ -55,19 +54,18 @@ export function HomePage() {
         <Container className="py-20 md:py-28">
           <div className="max-w-3xl">
             <Badge variant="secondary" className="rounded-full">
-              한국외대 학생을 위한 PS 연습장
+              {t.home.landing.badge}
             </Badge>
             <h1 className="mt-5 text-4xl font-bold tracking-tight md:text-6xl">
-              알고리즘은 매일,
+              {t.home.landing.heroLine1}
               <br />
-              함께 더 깊이.
+              {t.home.landing.heroLine2}
             </h1>
             <p className="mt-5 text-lg leading-relaxed text-muted-foreground md:text-xl">
-              트랙별 학습, 매주 갱신되는 스트릭, 그리고 AI 어시스턴트와 함께
-              HUFS CODE MASTER 에서 문제 풀이를 마스터해보세요.
+              {t.home.landing.subtitle}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <LoginButton size="lg" label="시작하기 · HUFS 이메일로 로그인" />
+              <LoginButton size="lg" label={t.home.landing.startCta} />
             </div>
           </div>
         </Container>

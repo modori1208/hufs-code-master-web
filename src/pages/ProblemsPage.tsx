@@ -22,6 +22,7 @@ import {
 import { Container } from '@/components/layout/Container';
 import { ProblemStatusIcon } from '@/components/problem/ProblemStatusIcon';
 import { useMyProblemStatus } from '@/hooks/useMyProblemStatus';
+import { t } from '@/i18n';
 import { listProblems } from '@/lib/api/problems';
 import { isFirstPage, isLastPage } from '@/lib/api/types';
 import type { Difficulty } from '@/lib/api/types';
@@ -60,9 +61,9 @@ export function ProblemsPage() {
     <Container className="py-10">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">문제</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t.problems.listTitle}</h1>
           <p className="mt-1 text-muted-foreground">
-            전체 문제 목록입니다. 난이도로 필터링할 수 있습니다.
+            {t.problems.listDescription}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -74,10 +75,10 @@ export function ProblemsPage() {
             }}
           >
             <SelectTrigger className="w-40">
-              <SelectValue placeholder="난이도" />
+              <SelectValue placeholder={t.problems.difficultyPlaceholder} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL}>모든 난이도</SelectItem>
+              <SelectItem value={ALL}>{t.problems.allDifficulties}</SelectItem>
               {DIFFICULTIES.map((d) => (
                 <SelectItem key={d} value={d}>
                   {DIFFICULTY_LABEL[d]}
@@ -93,9 +94,9 @@ export function ProblemsPage() {
           <TableHeader>
             <TableRow>
               <TableHead className="w-10"></TableHead>
-              <TableHead className="w-20">#</TableHead>
-              <TableHead>제목</TableHead>
-              <TableHead className="w-32">난이도</TableHead>
+              <TableHead className="w-20">{t.problems.columns.id}</TableHead>
+              <TableHead>{t.problems.columns.title}</TableHead>
+              <TableHead className="w-32">{t.problems.columns.difficulty}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -110,7 +111,7 @@ export function ProblemsPage() {
             ) : query.isError ? (
               <TableRow>
                 <TableCell colSpan={4} className="py-10 text-center text-destructive">
-                  문제 목록을 불러오지 못했습니다.
+                  {t.problems.loadFailed}
                 </TableCell>
               </TableRow>
             ) : query.data && query.data.content.length > 0 ? (
@@ -143,7 +144,7 @@ export function ProblemsPage() {
             ) : (
               <TableRow>
                 <TableCell colSpan={4} className="py-10 text-center text-muted-foreground">
-                  등록된 문제가 없습니다.
+                  {t.problems.empty}
                 </TableCell>
               </TableRow>
             )}
@@ -154,8 +155,12 @@ export function ProblemsPage() {
       {query.data && query.data.page.total_pages > 1 ? (
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <p>
-            {query.data.page.number + 1} / {query.data.page.total_pages} 페이지 (총{' '}
-            {query.data.page.total_elements}개)
+            {t.common.pageOf(
+              query.data.page.number + 1,
+              query.data.page.total_pages,
+              query.data.page.total_elements,
+              t.problems.countUnit,
+            )}
           </p>
           <div className="flex gap-2">
             <Button
@@ -164,7 +169,7 @@ export function ProblemsPage() {
               disabled={isFirstPage(query.data)}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
-              이전
+              {t.common.previous}
             </Button>
             <Button
               variant="outline"
@@ -172,7 +177,7 @@ export function ProblemsPage() {
               disabled={isLastPage(query.data)}
               onClick={() => setPage((p) => p + 1)}
             >
-              다음
+              {t.common.next}
             </Button>
           </div>
         </div>

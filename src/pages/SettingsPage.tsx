@@ -23,6 +23,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Container } from '@/components/layout/Container';
 import { AUTH_QUERY_KEY, useAuth } from '@/hooks/useAuth';
+import { t } from '@/i18n';
 import { ApiError } from '@/lib/api/client';
 import { updateNickname } from '@/lib/api/me';
 import { LANGUAGE_LABEL } from '@/lib/labels';
@@ -35,9 +36,9 @@ export function SettingsPage() {
   return (
     <Container className="py-10">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">설정</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t.settings.title}</h1>
         <p className="mt-1 text-muted-foreground">
-          계정 정보와 환경을 관리합니다.
+          {t.settings.description}
         </p>
       </header>
 
@@ -75,10 +76,10 @@ function ProfileSection() {
     mutationFn: (next: string) => updateNickname(next),
     onSuccess: (profile) => {
       queryClient.setQueryData(AUTH_QUERY_KEY, profile);
-      toast.success('닉네임이 변경되었습니다.');
+      toast.success(t.settings.profile.nicknameSaved);
     },
     onError: (err) => {
-      const msg = err instanceof ApiError ? err.message : '저장에 실패했습니다.';
+      const msg = err instanceof ApiError ? err.message : t.common.saveFailed;
       setErrorMessage(msg);
     },
   });
@@ -88,11 +89,11 @@ function ProfileSection() {
     setErrorMessage(null);
     const trimmed = nickname.trim();
     if (trimmed.length < NICKNAME_MIN || trimmed.length > NICKNAME_MAX) {
-      setErrorMessage(`닉네임은 ${NICKNAME_MIN}~${NICKNAME_MAX}자여야 합니다.`);
+      setErrorMessage(t.settings.profile.lengthError(NICKNAME_MIN, NICKNAME_MAX));
       return;
     }
     if (!NICKNAME_PATTERN.test(trimmed)) {
-      setErrorMessage('영문·숫자·한글만 사용할 수 있습니다.');
+      setErrorMessage(t.settings.profile.patternError);
       return;
     }
     if (trimmed === user?.nickname) {
@@ -108,12 +109,12 @@ function ProfileSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>프로필</CardTitle>
+        <CardTitle>{t.settings.profile.title}</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-6">
         {/* 닉네임 폼 */}
         <form onSubmit={handleSubmit} className="grid gap-2">
-          <Label htmlFor="nickname">닉네임</Label>
+          <Label htmlFor="nickname">{t.settings.profile.nicknameLabel}</Label>
           <div className="flex items-start gap-2">
             <Input
               id="nickname"
@@ -127,7 +128,7 @@ function ProfileSection() {
               {mutation.isPending ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : null}
-              저장
+              {t.common.save}
             </Button>
           </div>
           {errorMessage ? (
@@ -136,7 +137,7 @@ function ProfileSection() {
             </Alert>
           ) : null}
           <p className="text-xs text-muted-foreground">
-            {NICKNAME_MIN}~{NICKNAME_MAX}자, 영문·숫자·한글만. 다른 사용자와 중복될 수 없습니다.
+            {t.settings.profile.rule(NICKNAME_MIN, NICKNAME_MAX)}
           </p>
         </form>
 
@@ -144,9 +145,9 @@ function ProfileSection() {
 
         {/* 읽기 전용 정보 */}
         <dl className="grid gap-3 text-sm">
-          <ReadonlyRow label="이름" value={user.name} />
-          <ReadonlyRow label="이메일" value={user.email} />
-          <ReadonlyRow label="학과" value={user.department} />
+          <ReadonlyRow label={t.settings.profile.fields.name} value={user.name} />
+          <ReadonlyRow label={t.settings.profile.fields.email} value={user.email} />
+          <ReadonlyRow label={t.settings.profile.fields.department} value={user.department} />
         </dl>
       </CardContent>
     </Card>
@@ -177,23 +178,23 @@ function EditorPreferencesSection() {
     setLanguage(next);
     try {
       window.localStorage.setItem(LANG_PREF_KEY, next);
-      toast.success('기본 언어가 변경되었습니다.');
+      toast.success(t.settings.editor.defaultLanguageSaved);
     } catch {
-      toast.error('저장에 실패했습니다.');
+      toast.error(t.common.saveFailed);
     }
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>코드 에디터</CardTitle>
+        <CardTitle>{t.settings.editor.title}</CardTitle>
         <CardDescription>
-          이 브라우저에 한정된 설정입니다. 다른 기기에는 동기화되지 않습니다.
+          {t.settings.editor.description}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-2">
-          <Label htmlFor="default-language">기본 언어</Label>
+          <Label htmlFor="default-language">{t.settings.editor.defaultLanguage}</Label>
           <Select
             value={language}
             onValueChange={(v) => handleChange(v as Language)}
@@ -210,8 +211,7 @@ function EditorPreferencesSection() {
             </SelectContent>
           </Select>
           <p className="text-xs text-muted-foreground">
-            새 문제의 제출 탭에서 처음 선택될 언어입니다. 문제별 작성 중인 코드는
-            언어와 함께 저장되며 그대로 보존됩니다.
+            {t.settings.editor.defaultLanguageHint}
           </p>
         </div>
       </CardContent>

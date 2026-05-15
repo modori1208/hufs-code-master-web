@@ -14,6 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Container } from '@/components/layout/Container';
+import { t } from '@/i18n';
 import { listMySubmissions } from '@/lib/api/submissions';
 import { isFirstPage, isLastPage } from '@/lib/api/types';
 import { LANGUAGE_LABEL, VERDICT_BADGE, VERDICT_LABEL } from '@/lib/labels';
@@ -39,9 +40,9 @@ export function SubmissionsPage() {
   return (
     <Container className="py-10">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">내 제출</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t.submissions.myTitle}</h1>
         <p className="mt-1 text-muted-foreground">
-          내가 제출한 코드와 채점 결과를 확인합니다.
+          {t.submissions.myDescription}
         </p>
       </header>
 
@@ -49,13 +50,13 @@ export function SubmissionsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-20">#</TableHead>
-              <TableHead>문제</TableHead>
-              <TableHead className="w-32">언어</TableHead>
-              <TableHead className="w-40">결과</TableHead>
-              <TableHead className="w-28 text-right">실행시간</TableHead>
-              <TableHead className="w-28 text-right">메모리</TableHead>
-              <TableHead className="w-48">제출 시각</TableHead>
+              <TableHead className="w-20">{t.submissions.myColumns.id}</TableHead>
+              <TableHead>{t.submissions.myColumns.problem}</TableHead>
+              <TableHead className="w-32">{t.submissions.myColumns.language}</TableHead>
+              <TableHead className="w-40">{t.submissions.myColumns.verdict}</TableHead>
+              <TableHead className="w-28 text-right">{t.submissions.myColumns.runtime}</TableHead>
+              <TableHead className="w-28 text-right">{t.submissions.myColumns.memory}</TableHead>
+              <TableHead className="w-48">{t.submissions.myColumns.time}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -71,7 +72,7 @@ export function SubmissionsPage() {
               <TableRow>
                 <TableCell colSpan={7}>
                   <Alert variant="destructive">
-                    <AlertDescription>제출 내역을 불러오지 못했습니다.</AlertDescription>
+                    <AlertDescription>{t.submissions.myLoadFailed}</AlertDescription>
                   </Alert>
                 </TableCell>
               </TableRow>
@@ -112,7 +113,7 @@ export function SubmissionsPage() {
             ) : (
               <TableRow>
                 <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
-                  아직 제출 내역이 없습니다.
+                  {t.submissions.myEmpty}
                 </TableCell>
               </TableRow>
             )}
@@ -123,8 +124,12 @@ export function SubmissionsPage() {
       {query.data && query.data.page.total_pages > 1 ? (
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <p>
-            {query.data.page.number + 1} / {query.data.page.total_pages} 페이지 (총{' '}
-            {query.data.page.total_elements}개)
+            {t.common.pageOf(
+              query.data.page.number + 1,
+              query.data.page.total_pages,
+              query.data.page.total_elements,
+              t.submissions.countUnit,
+            )}
           </p>
           <div className="flex gap-2">
             <Button
@@ -133,7 +138,7 @@ export function SubmissionsPage() {
               disabled={isFirstPage(query.data)}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
-              이전
+              {t.common.previous}
             </Button>
             <Button
               variant="outline"
@@ -141,7 +146,7 @@ export function SubmissionsPage() {
               disabled={isLastPage(query.data)}
               onClick={() => setPage((p) => p + 1)}
             >
-              다음
+              {t.common.next}
             </Button>
           </div>
         </div>

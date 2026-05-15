@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { BannedScreenDialog } from '@/components/auth/BannedScreenDialog';
 import { NicknameSetupDialog } from '@/components/auth/NicknameSetupDialog';
+import { t } from '@/i18n';
 import { Container } from './Container';
 import { Header } from './Header';
 
@@ -13,8 +14,8 @@ export function AppLayout() {
       </main>
       <footer className="border-t border-border py-6">
         <Container className="flex flex-col items-center justify-between gap-2 text-sm text-muted-foreground sm:flex-row">
-          <p>© {new Date().getFullYear()} HUFSTORY · 한국외국어대학교</p>
-          <p>이 플랫폼은 교수학습개발센터의 Bring Your Own Ideas 지원으로 제작되었습니다.</p>
+          <p>{t.layout.footer.copyright(new Date().getFullYear())}</p>
+          <p>{t.layout.footer.sponsor}</p>
         </Container>
       </footer>
 

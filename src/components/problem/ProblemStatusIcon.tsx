@@ -5,6 +5,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import type { ProblemStatus } from '@/hooks/useMyProblemStatus';
+import { t } from '@/i18n';
 
 /**
  * 문제 목록 행에 표시하는 풀이 상태 아이콘.
@@ -19,7 +20,7 @@ export function ProblemStatusIcon({ status }: { status: ProblemStatus }) {
 
   const isSolved = status === 'solved';
   const Icon = isSolved ? Check : Circle;
-  const label = isSolved ? '맞은 문제' : '시도 중';
+  const label = isSolved ? t.problems.status.solved : t.problems.status.attempted;
 
   return (
     <Tooltip>

@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select';
 import { CodeEditor } from './CodeEditor';
 import { useAuth } from '@/hooks/useAuth';
+import { t } from '@/i18n';
 import { listMySubmissions, submitCode } from '@/lib/api/submissions';
 import { CODE_TEMPLATES } from '@/lib/code-templates';
 import { LANGUAGE_LABEL, VERDICT_BADGE, VERDICT_LABEL } from '@/lib/labels';
@@ -117,13 +118,13 @@ export function SubmissionPanel({ problemId }: { problemId: number }) {
     mutationFn: () =>
       submitCode({ problem_id: problemId, language, source_code: code }),
     onSuccess: () => {
-      toast.success('제출되었습니다. 채점 결과를 기다리는 중입니다.');
+      toast.success(t.submitPanel.submitted);
       queryClient.invalidateQueries({ queryKey: ['submissions'] });
       queryClient.invalidateQueries({ queryKey: ['me', 'problem-status'] });
     },
     onError: (err) => {
-      const message = err instanceof Error ? err.message : '알 수 없는 오류';
-      toast.error(`제출에 실패했습니다: ${message}`);
+      const message = err instanceof Error ? err.message : t.common.unknownError;
+      toast.error(t.submitPanel.submitFailedWith(message));
     },
   });
 
@@ -133,16 +134,14 @@ export function SubmissionPanel({ problemId }: { problemId: number }) {
       return;
     }
     if (!code.trim()) {
-      toast.error('빈 코드는 제출할 수 없습니다.');
+      toast.error(t.submitPanel.emptyCode);
       return;
     }
     submitMutation.mutate();
   };
 
   const handleReset = () => {
-    if (
-      window.confirm('템플릿으로 초기화할까요? 현재 작성한 코드는 사라집니다.')
-    ) {
+    if (window.confirm(t.submitPanel.confirmReset)) {
       handleCodeChange(CODE_TEMPLATES[language]);
     }
   };
@@ -150,7 +149,7 @@ export function SubmissionPanel({ problemId }: { problemId: number }) {
   return (
     <Card>
       <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <CardTitle>코드 제출</CardTitle>
+        <CardTitle>{t.submitPanel.cardTitle}</CardTitle>
         <div className="flex items-center gap-2">
           <Select
             value={language}
@@ -169,7 +168,7 @@ export function SubmissionPanel({ problemId }: { problemId: number }) {
           </Select>
           <Button variant="outline" size="sm" onClick={handleReset}>
             <RotateCcw className="size-4" />
-            템플릿
+            {t.submitPanel.templateButton}
           </Button>
         </div>
       </CardHeader>
@@ -183,8 +182,8 @@ export function SubmissionPanel({ problemId }: { problemId: number }) {
         <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">
             {isAuthenticated
-              ? '제출 후 채점 결과가 자동으로 갱신됩니다.'
-              : '로그인 후 코드를 제출할 수 있습니다.'}
+              ? t.submitPanel.afterSubmitHint
+              : t.submitPanel.loginRequiredHint}
           </p>
           <Button
             onClick={handleSubmit}
@@ -197,14 +196,14 @@ export function SubmissionPanel({ problemId }: { problemId: number }) {
             ) : (
               <Play className="size-4" />
             )}
-            제출하기
+            {t.submitPanel.submitButton}
           </Button>
         </div>
 
         {isAuthenticated && submissions.length > 0 ? (
           <div className="border-t border-border pt-4">
             <h3 className="text-sm font-medium text-muted-foreground">
-              이 문제 최근 제출
+              {t.submitPanel.recentForProblem}
             </h3>
             <ul className="mt-3 space-y-2">
               {submissions.map((s) => {

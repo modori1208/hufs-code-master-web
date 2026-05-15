@@ -2,6 +2,7 @@ import type { MouseEvent } from 'react';
 import { useLocation } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { t } from '@/i18n';
 import { startSsoLogin } from '@/lib/api/auth';
 import { cn } from '@/lib/utils';
 
@@ -14,7 +15,7 @@ type LoginButtonProps = {
 
 export function LoginButton({
   className,
-  label = '로그인',
+  label = t.auth.loginShort,
   size = 'sm',
   variant = 'default',
 }: LoginButtonProps) {

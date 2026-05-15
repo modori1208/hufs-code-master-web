@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Container } from '@/components/layout/Container';
 import { Markdown } from '@/components/Markdown';
 import { SubmissionFeed } from '@/components/problem/SubmissionFeed';
+import { t } from '@/i18n';
 import { getProblem } from '@/lib/api/problems';
 import { DIFFICULTY_BADGE, DIFFICULTY_LABEL } from '@/lib/labels';
 import { cn } from '@/lib/utils';
@@ -57,7 +58,7 @@ export function ProblemDetailPage() {
     return (
       <Container className="py-10">
         <Alert variant="destructive">
-          <AlertDescription>문제를 불러올 수 없습니다.</AlertDescription>
+          <AlertDescription>{t.problems.detail.loadFailed}</AlertDescription>
         </Alert>
       </Container>
     );
@@ -93,20 +94,20 @@ export function ProblemDetailPage() {
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <Clock className="size-4" />
-            시간 제한: {problem.time_limit_ms} ms
+            {t.problems.detail.timeLimitLabel(problem.time_limit_ms)}
           </span>
           <span className="inline-flex items-center gap-1.5">
             <MemoryStick className="size-4" />
-            메모리 제한: {problem.memory_limit_mb} MiB
+            {t.problems.detail.memoryLimitLabel(problem.memory_limit_mb)}
           </span>
         </div>
       </header>
 
       <Tabs value={tab} onValueChange={handleTabChange} className="mt-8">
         <TabsList>
-          <TabsTrigger value="problem" className="px-6">문제</TabsTrigger>
-          <TabsTrigger value="submit" className="px-6">제출</TabsTrigger>
-          <TabsTrigger value="status" className="px-6">채점 현황</TabsTrigger>
+          <TabsTrigger value="problem" className="px-6">{t.problems.detail.tab.statement}</TabsTrigger>
+          <TabsTrigger value="submit" className="px-6">{t.problems.detail.tab.submit}</TabsTrigger>
+          <TabsTrigger value="status" className="px-6">{t.problems.detail.tab.feed}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="problem" className="mt-6">
@@ -118,7 +119,7 @@ export function ProblemDetailPage() {
             fallback={
               <div className="flex items-center justify-center py-32 text-muted-foreground">
                 <Loader2 className="mr-2 size-5 animate-spin" />
-                에디터를 불러오는 중...
+                {t.problems.detail.editorLoading}
               </div>
             }
           >
@@ -143,7 +144,7 @@ function ProblemContent({ problem }: { problem: ProblemDetail }) {
 
       {problem.samples.length > 0 ? (
         <section className="mt-10">
-          <h2 className="text-xl font-semibold">예제</h2>
+          <h2 className="text-xl font-semibold">{t.problems.detail.samples}</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             {problem.samples.map((s) => (
               <div
@@ -153,7 +154,7 @@ function ProblemContent({ problem }: { problem: ProblemDetail }) {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm">
-                      예제 입력 {s.order_index}
+                      {t.problems.detail.sampleInputN(s.order_index)}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -165,7 +166,7 @@ function ProblemContent({ problem }: { problem: ProblemDetail }) {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm">
-                      예제 출력 {s.order_index}
+                      {t.problems.detail.sampleOutputN(s.order_index)}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>

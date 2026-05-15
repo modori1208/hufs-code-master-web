@@ -11,12 +11,13 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
+import { t } from '@/i18n';
 
 const REASON_MESSAGE: Record<string, string> = {
-  invalid_state: '인증 세션이 만료되었거나 변조되었습니다. 다시 시도해 주세요.',
-  invalid_callback: '잘못된 콜백 요청입니다. 다시 시도해 주세요.',
-  login_failed: '로그인에 실패했습니다. 다시 시도해 주세요.',
-  unsupported_status: '재학생만 이용할 수 있는 서비스입니다.',
+  invalid_state: t.auth.loginErrors.invalidState,
+  invalid_callback: t.auth.loginErrors.invalidCallback,
+  login_failed: t.auth.loginErrors.loginFailed,
+  unsupported_status: t.auth.loginErrors.unsupportedStatus,
 };
 
 export function LoginPage() {
@@ -42,10 +43,8 @@ export function LoginPage() {
     <Container className="flex items-center justify-center py-24">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">로그인이 필요합니다</CardTitle>
-          <CardDescription>
-            HUFS 이메일로 로그인해야 문제를 풀고 활동을 기록할 수 있습니다.
-          </CardDescription>
+          <CardTitle className="text-2xl">{t.auth.loginRequired}</CardTitle>
+          <CardDescription>{t.auth.loginPageDescription}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           {reasonMessage ? (
@@ -53,9 +52,9 @@ export function LoginPage() {
               <AlertDescription>{reasonMessage}</AlertDescription>
             </Alert>
           ) : null}
-          <LoginButton size="lg" label="HUFS 이메일로 로그인" />
+          <LoginButton size="lg" label={t.auth.loginButton} />
           <p className="text-center text-xs text-muted-foreground">
-            한국외대 재학생만 이용 가능합니다.
+            {t.auth.loginPageStudentOnly}
           </p>
         </CardContent>
       </Card>

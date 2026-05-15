@@ -1,6 +1,7 @@
 import { Editor } from '@monaco-editor/react';
 import { useTheme } from 'next-themes';
 import { Loader2 } from 'lucide-react';
+import { t } from '@/i18n';
 import type { Language } from '@/lib/api/types';
 
 /**
@@ -38,7 +39,7 @@ export function CodeEditor({ value, onChange, language, height = 480 }: Props) {
         loading={
           <div className="flex h-full items-center justify-center text-muted-foreground">
             <Loader2 className="mr-2 size-4 animate-spin" />
-            에디터를 불러오는 중...
+            {t.editor.loading}
           </div>
         }
         options={{

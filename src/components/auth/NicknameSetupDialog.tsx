@@ -14,6 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AUTH_QUERY_KEY, useAuth } from '@/hooks/useAuth';
+import { t } from '@/i18n';
 import { ApiError } from '@/lib/api/client';
 import { updateNickname } from '@/lib/api/me';
 
@@ -53,13 +54,13 @@ export function NicknameSetupDialog() {
     mutationFn: (nickname: string) => updateNickname(nickname),
     onSuccess: (profile) => {
       queryClient.setQueryData(AUTH_QUERY_KEY, profile);
-      toast.success('닉네임이 설정되었습니다.');
+      toast.success(t.auth.nicknameDialog.saved);
     },
     onError: (err) => {
       if (err instanceof ApiError) {
         setErrorMessage(err.message);
       } else {
-        setErrorMessage('닉네임 설정에 실패했습니다.');
+        setErrorMessage(t.auth.nicknameDialog.saveFailed);
       }
     },
   });
@@ -69,11 +70,11 @@ export function NicknameSetupDialog() {
     setErrorMessage(null);
     const trimmed = value.trim();
     if (trimmed.length < MIN || trimmed.length > MAX) {
-      setErrorMessage(`닉네임은 ${MIN}~${MAX}자여야 합니다.`);
+      setErrorMessage(t.auth.nicknameDialog.lengthError(MIN, MAX));
       return;
     }
     if (!NICKNAME_PATTERN.test(trimmed)) {
-      setErrorMessage('영문·숫자·한글만 사용할 수 있습니다.');
+      setErrorMessage(t.auth.nicknameDialog.patternError);
       return;
     }
     mutation.mutate(trimmed);
@@ -88,15 +89,14 @@ export function NicknameSetupDialog() {
         onInteractOutside={(e) => e.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle>사용할 닉네임을 정해주세요</DialogTitle>
+          <DialogTitle>{t.auth.nicknameDialog.title}</DialogTitle>
           <DialogDescription>
-            채점 현황·랭킹 등 다른 사용자에게 보이는 화면에서 실명 대신 이 닉네임이
-            노출됩니다. 닉네임을 설정해야 서비스를 이용할 수 있습니다.
+            {t.auth.nicknameDialog.description}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="nickname-input">닉네임</Label>
+            <Label htmlFor="nickname-input">{t.auth.nicknameDialog.label}</Label>
             <Input
               id="nickname-input"
               value={value}
@@ -107,7 +107,7 @@ export function NicknameSetupDialog() {
               placeholder={user?.name ?? ''}
             />
             <p className="text-xs text-muted-foreground">
-              {MIN}~{MAX}자, 영문·숫자·한글만. 다른 사용자와 중복될 수 없습니다.
+              {t.auth.nicknameDialog.rule(MIN, MAX)}
             </p>
           </div>
           {errorMessage ? (
@@ -119,7 +119,7 @@ export function NicknameSetupDialog() {
             {mutation.isPending ? (
               <Loader2 className="size-4 animate-spin" />
             ) : null}
-            설정 완료
+            {t.auth.nicknameDialog.submitButton}
           </Button>
         </form>
       </DialogContent>

@@ -29,6 +29,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { AUTH_QUERY_KEY } from '@/hooks/useAuth';
+import { t } from '@/i18n';
 import { logout } from '@/lib/api/auth';
 import { userImageUrl } from '@/lib/image-urls';
 import { cn } from '@/lib/utils';
@@ -50,9 +51,9 @@ export function UserMenu({ user }: { user: MemberProfile }) {
     setBusy(true);
     try {
       await logout();
-      toast.success('로그아웃되었습니다.');
+      toast.success(t.userMenu.logoutSuccess);
     } catch {
-      toast.error('로그아웃에 실패했습니다.');
+      toast.error(t.userMenu.logoutFailed);
     } finally {
       queryClient.setQueryData(AUTH_QUERY_KEY, null);
       navigate('/');
@@ -94,26 +95,28 @@ export function UserMenu({ user }: { user: MemberProfile }) {
         {user.nickname ? (
           <DropdownMenuItem asChild>
             <Link to={`/users/${user.id}`} className="cursor-pointer">
-              <UserIcon className="size-4" />내 프로필
+              <UserIcon className="size-4" />
+              {t.userMenu.myProfile}
             </Link>
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuItem asChild>
           <Link to="/submissions" className="cursor-pointer">
-            <History className="size-4" />내 제출 기록
+            <History className="size-4" />
+            {t.userMenu.mySubmissions}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link to="/settings" className="cursor-pointer">
             <Settings className="size-4" />
-            설정
+            {t.userMenu.settings}
           </Link>
         </DropdownMenuItem>
         {user.role === 'ADMIN' ? (
           <DropdownMenuItem asChild>
             <Link to="/admin" className="cursor-pointer">
               <LayoutDashboard className="size-4" />
-              관리자
+              {t.userMenu.admin}
             </Link>
           </DropdownMenuItem>
         ) : null}
@@ -126,7 +129,7 @@ export function UserMenu({ user }: { user: MemberProfile }) {
           className="cursor-pointer text-destructive focus:text-destructive"
         >
           <LogOut className="size-4" />
-          로그아웃
+          {t.userMenu.logout}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -136,9 +139,9 @@ export function UserMenu({ user }: { user: MemberProfile }) {
 // ----- Theme segmented control (드롭다운 안에서 한 줄, 세 버튼) -----
 
 const THEME_OPTIONS = [
-  { value: 'light' as const, label: '라이트', icon: Sun },
-  { value: 'dark' as const, label: '다크', icon: Moon },
-  { value: 'system' as const, label: '시스템', icon: Monitor },
+  { value: 'light' as const, label: t.userMenu.theme.light, icon: Sun },
+  { value: 'dark' as const, label: t.userMenu.theme.dark, icon: Moon },
+  { value: 'system' as const, label: t.userMenu.theme.system, icon: Monitor },
 ];
 
 function ThemeSegmented() {
