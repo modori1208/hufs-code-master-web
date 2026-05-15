@@ -46,6 +46,7 @@ import {
 import { getUserById } from '@/lib/api/users';
 import { userImageUrl } from '@/lib/image-urls';
 import { cn } from '@/lib/utils';
+import { useBannedDialog } from '@/stores/bannedDialog';
 import type { UserPublicProfile } from '@/lib/api/types';
 
 const STATUS_MAX = 200;
@@ -86,6 +87,7 @@ export function UserPage() {
   const validId = Number.isFinite(userId) && userId > 0;
   const { user: currentUser } = useAuth();
   const isOwner = !!currentUser && validId && currentUser.id === userId;
+  const showBannedDialog = useBannedDialog((s) => s.show);
 
   const query = useQuery({
     queryKey: ['user', userId],
@@ -148,18 +150,28 @@ export function UserPage() {
 
   return (
     <>
-      {/* 차단된 사용자 프로필 — 본인/관리자에게만 도달. 상단에 제한 배너 표시. */}
+      {/* 차단된 사용자 프로필 — 본인/관리자에게만 도달. 상단에 클릭 가능한 제한 배너 표시.
+          본인이 클릭하면 안내 모달을 다시 띄움 (로그인 시 모달을 바로 닫았을 경우 대비). */}
       {user.restricted ? (
-        <div className="border-b border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <button
+          type="button"
+          onClick={isOwner ? () => showBannedDialog() : undefined}
+          disabled={!isOwner}
+          className={cn(
+            'block w-full border-b border-destructive/30 bg-destructive/10 px-4 py-3 text-left text-sm text-destructive',
+            isOwner
+              ? 'transition-colors hover:bg-destructive/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive'
+              : 'cursor-default',
+          )}
+        >
           <Container className="flex items-center gap-2">
             <Shield className="size-4 shrink-0" />
             <p>
               <span className="font-medium">계정이 제한되었습니다.</span>{' '}
               운영 정책 위반으로 인해 사이트 이용이 제한되었으며 프로필은 본인에게만 표시됩니다.
-              이의 제기를 원하시는 경우 관리자에게 문의해 주세요.
             </p>
           </Container>
-        </div>
+        </button>
       ) : null}
 
       {/* Cover */}

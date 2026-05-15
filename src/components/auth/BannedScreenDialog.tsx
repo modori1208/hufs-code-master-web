@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Ban, Clock } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
@@ -11,44 +11,57 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useBannedDialog } from '@/stores/bannedDialog';
 import type { MemberProfile } from '@/lib/api/types';
 
 const DISMISS_KEY_PREFIX = 'cm:banned-dismissed:';
 
 /**
- * 차단된 사용자에게 로그인 시 한 번 띄우는 안내 모달. ESC·바깥 클릭·닫기 버튼으로 닫을 수 있으며
- * 같은 세션에서는 재표시되지 않습니다. 둘러보기 자체는 차단하지 않고, 실제 제출 같은 액션만
- * 서버 측에서 거부됩니다.
+ * 차단된 사용자에게 로그인 시 한 번 띄우는 안내 모달.
+ * <ul>
+ *   <li>같은 세션에서 한 번만 자동 표시 (sessionStorage 로 추적)</li>
+ *   <li>ESC · X 버튼 · "확인" 버튼으로 닫을 수 있음. 바깥 클릭으로는 닫히지 않음</li>
+ *   <li>본인 프로필의 제한 배너 클릭 등 외부 트리거({@link useBannedDialog})로 다시 열 수 있음</li>
+ * </ul>
  */
 export function BannedScreenDialog() {
   const { user } = useAuth();
-  const [open, setOpen] = useState(false);
+  const open = useBannedDialog((s) => s.open);
+  const show = useBannedDialog((s) => s.show);
+  const hide = useBannedDialog((s) => s.hide);
 
+  // 로그인 직후 한 번만 자동 표시. 같은 세션에서 닫혔으면 다시 안 띄움.
   useEffect(() => {
     if (!user || !isCurrentlyBanned(user)) {
-      setOpen(false);
+      hide();
       return;
     }
     const key = DISMISS_KEY_PREFIX + user.id;
     if (window.sessionStorage.getItem(key) === '1') {
       return;
     }
-    setOpen(true);
-  }, [user]);
+    show();
+  }, [user, show, hide]);
 
-  const handleClose = (next: boolean) => {
-    if (next || !user) {
-      setOpen(next);
+  const handleOpenChange = (next: boolean) => {
+    if (next) {
+      show();
       return;
     }
-    window.sessionStorage.setItem(DISMISS_KEY_PREFIX + user.id, '1');
-    setOpen(false);
+    if (user) {
+      window.sessionStorage.setItem(DISMISS_KEY_PREFIX + user.id, '1');
+    }
+    hide();
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
-        {user ? <BannedContent user={user} onClose={() => handleClose(false)} /> : null}
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="max-w-md"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        {user ? <BannedContent user={user} onClose={() => handleOpenChange(false)} /> : null}
       </DialogContent>
     </Dialog>
   );
@@ -80,9 +93,7 @@ function BannedContent({ user, onClose }: { user: MemberProfile; onClose: () => 
         </div>
         <DialogTitle className="text-center">계정이 제한된 상태입니다</DialogTitle>
         <DialogDescription className="text-center">
-          {isPermanent
-            ? '운영 정책 위반으로 이 계정은 영구 제한되었습니다.'
-            : '운영 정책 위반으로 이 계정은 일시 제한되었습니다.'}
+          운영 정책 위반으로 이 계정은 {isPermanent ? '영구' : '일시'} 제한되었습니다.
         </DialogDescription>
       </DialogHeader>
 
@@ -105,7 +116,7 @@ function BannedContent({ user, onClose }: { user: MemberProfile; onClose: () => 
         ) : null}
 
         <p className="text-center text-xs text-muted-foreground">
-          이의가 있는 경우 운영자에게 문의하세요.
+          이의 제기를 원하는 경우 관리자에게 문의하세요.
         </p>
       </div>
 
