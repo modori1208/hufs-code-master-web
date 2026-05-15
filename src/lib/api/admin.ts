@@ -1,6 +1,7 @@
 import { apiDelete, apiGet, apiPost, apiPut, buildQuery } from './client';
 import type {
   AddTrackProblemRequest,
+  AdminJudgehost,
   AdminMember,
   AdminTestCase,
   BanPermanentlyRequest,
@@ -8,9 +9,11 @@ import type {
   CreateProblemRequest,
   CreateTestCaseRequest,
   CreateTrackRequest,
+  LanguageConfig,
   Page,
   ProblemDetail,
   TrackDetail,
+  UpdateLanguageConfigRequest,
   UpdateProblemRequest,
   UpdateTestCaseRequest,
   UpdateTrackRequest,
@@ -147,4 +150,36 @@ export function banPermanently(
 
 export function unbanMember(memberId: number): Promise<AdminMember> {
   return apiDelete<AdminMember>(`/api/v1/admin/members/${memberId}/ban`);
+}
+
+// ----- Judgehosts -----
+
+export function listAdminJudgehosts(): Promise<AdminJudgehost[]> {
+  return apiGet<AdminJudgehost[]>('/api/v1/admin/judgehosts');
+}
+
+export function setJudgehostEnabled(
+  id: number,
+  enabled: boolean,
+): Promise<AdminJudgehost> {
+  return apiPut<AdminJudgehost>(`/api/v1/admin/judgehosts/${id}/enabled`, {
+    enabled,
+  });
+}
+
+export function deleteJudgehost(id: number): Promise<void> {
+  return apiDelete<void>(`/api/v1/admin/judgehosts/${id}`);
+}
+
+// ----- Languages -----
+
+export function listAdminLanguages(): Promise<LanguageConfig[]> {
+  return apiGet<LanguageConfig[]>('/api/v1/admin/languages');
+}
+
+export function updateLanguageConfig(
+  language: string,
+  body: UpdateLanguageConfigRequest,
+): Promise<LanguageConfig> {
+  return apiPut<LanguageConfig>(`/api/v1/admin/languages/${language}`, body);
 }
