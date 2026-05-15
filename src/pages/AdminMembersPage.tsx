@@ -49,6 +49,7 @@ import {
   unbanMember,
 } from '@/lib/api/admin';
 import { ApiError } from '@/lib/api/client';
+import { isFirstPage, isLastPage } from '@/lib/api/types';
 import type { AdminMember } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
 
@@ -209,17 +210,17 @@ export default function AdminMembersPage() {
         </Table>
       </div>
 
-      {query.data && query.data.total_pages > 1 ? (
+      {query.data && query.data.page.total_pages > 1 ? (
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <p>
-            {query.data.number + 1} / {query.data.total_pages} 페이지 (총{' '}
-            {query.data.total_elements}명)
+            {query.data.page.number + 1} / {query.data.page.total_pages} 페이지 (총{' '}
+            {query.data.page.total_elements}명)
           </p>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
-              disabled={query.data.first}
+              disabled={isFirstPage(query.data)}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
               이전
@@ -227,7 +228,7 @@ export default function AdminMembersPage() {
             <Button
               variant="outline"
               size="sm"
-              disabled={query.data.last}
+              disabled={isLastPage(query.data)}
               onClick={() => setPage((p) => p + 1)}
             >
               다음

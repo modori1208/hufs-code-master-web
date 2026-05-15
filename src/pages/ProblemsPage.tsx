@@ -23,6 +23,7 @@ import { Container } from '@/components/layout/Container';
 import { ProblemStatusIcon } from '@/components/problem/ProblemStatusIcon';
 import { useMyProblemStatus } from '@/hooks/useMyProblemStatus';
 import { listProblems } from '@/lib/api/problems';
+import { isFirstPage, isLastPage } from '@/lib/api/types';
 import type { Difficulty } from '@/lib/api/types';
 import { DIFFICULTY_BADGE, DIFFICULTY_LABEL } from '@/lib/labels';
 import { cn } from '@/lib/utils';
@@ -150,17 +151,17 @@ export function ProblemsPage() {
         </Table>
       </div>
 
-      {query.data && query.data.total_pages > 1 ? (
+      {query.data && query.data.page.total_pages > 1 ? (
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <p>
-            {query.data.number + 1} / {query.data.total_pages} 페이지 (총{' '}
-            {query.data.total_elements}개)
+            {query.data.page.number + 1} / {query.data.page.total_pages} 페이지 (총{' '}
+            {query.data.page.total_elements}개)
           </p>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
-              disabled={query.data.first}
+              disabled={isFirstPage(query.data)}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
               이전
@@ -168,7 +169,7 @@ export function ProblemsPage() {
             <Button
               variant="outline"
               size="sm"
-              disabled={query.data.last}
+              disabled={isLastPage(query.data)}
               onClick={() => setPage((p) => p + 1)}
             >
               다음

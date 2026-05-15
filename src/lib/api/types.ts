@@ -8,18 +8,30 @@ export type ApiResponse<T> = {
 };
 
 /**
- * Spring Data 의 `Page<T>` 직렬화 형태 (SNAKE_CASE 변환 후).
+ * Spring Data 의 `Page<T>` 가 PagedModel(VIA_DTO) 로 직렬화된 형태 (SNAKE_CASE 변환 후).
+ * 백엔드 Application 에 {@code @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)}
+ * 가 적용되어 있어, content 와 page 메타가 분리되어 직렬화됩니다.
+ *
+ * first / last / number_of_elements 는 응답에 없으므로 헬퍼({@link isFirstPage}, {@link isLastPage})
+ * 로 계산합니다.
  */
 export type Page<T> = {
   content: T[];
-  number: number;
-  size: number;
-  total_elements: number;
-  total_pages: number;
-  number_of_elements: number;
-  first: boolean;
-  last: boolean;
+  page: {
+    size: number;
+    number: number;
+    total_elements: number;
+    total_pages: number;
+  };
 };
+
+export function isFirstPage(page: Page<unknown>): boolean {
+  return page.page.number <= 0;
+}
+
+export function isLastPage(page: Page<unknown>): boolean {
+  return page.page.number >= page.page.total_pages - 1;
+}
 
 // ----- User -----
 

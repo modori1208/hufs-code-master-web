@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/table';
 import { Container } from '@/components/layout/Container';
 import { listMySubmissions } from '@/lib/api/submissions';
+import { isFirstPage, isLastPage } from '@/lib/api/types';
 import { LANGUAGE_LABEL, VERDICT_BADGE, VERDICT_LABEL } from '@/lib/labels';
 import { cn } from '@/lib/utils';
 
@@ -119,17 +120,17 @@ export function SubmissionsPage() {
         </Table>
       </div>
 
-      {query.data && query.data.total_pages > 1 ? (
+      {query.data && query.data.page.total_pages > 1 ? (
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <p>
-            {query.data.number + 1} / {query.data.total_pages} 페이지 (총{' '}
-            {query.data.total_elements}개)
+            {query.data.page.number + 1} / {query.data.page.total_pages} 페이지 (총{' '}
+            {query.data.page.total_elements}개)
           </p>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
-              disabled={query.data.first}
+              disabled={isFirstPage(query.data)}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
               이전
@@ -137,7 +138,7 @@ export function SubmissionsPage() {
             <Button
               variant="outline"
               size="sm"
-              disabled={query.data.last}
+              disabled={isLastPage(query.data)}
               onClick={() => setPage((p) => p + 1)}
             >
               다음
