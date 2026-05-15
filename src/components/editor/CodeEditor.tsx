@@ -11,7 +11,6 @@ const MONACO_LANG: Record<Language, string> = {
   CPP: 'cpp',
   JAVA: 'java',
   PYTHON3: 'python',
-  KOTLIN: 'kotlin',
 };
 
 type Props = {

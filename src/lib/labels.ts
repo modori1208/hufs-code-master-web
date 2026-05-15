@@ -26,7 +26,6 @@ export const LANGUAGE_LABEL: Record<Language, string> = {
   CPP: 'C++',
   JAVA: 'Java',
   PYTHON3: 'Python 3',
-  KOTLIN: 'Kotlin',
 };
 
 export const VERDICT_LABEL: Record<SubmissionVerdict, string> = {

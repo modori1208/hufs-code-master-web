@@ -28,7 +28,7 @@ import { updateNickname } from '@/lib/api/me';
 import { LANGUAGE_LABEL } from '@/lib/labels';
 import type { Language } from '@/lib/api/types';
 
-const LANGUAGES: Language[] = ['PYTHON3', 'CPP', 'C', 'JAVA', 'KOTLIN'];
+const LANGUAGES: Language[] = ['PYTHON3', 'CPP', 'C', 'JAVA'];
 const LANG_PREF_KEY = 'cm:lang';
 
 export function SettingsPage() {

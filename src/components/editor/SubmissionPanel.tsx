@@ -26,7 +26,7 @@ import { LANGUAGE_LABEL, VERDICT_BADGE, VERDICT_LABEL } from '@/lib/labels';
 import type { Language } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
 
-const LANGUAGES: Language[] = ['PYTHON3', 'CPP', 'C', 'JAVA', 'KOTLIN'];
+const LANGUAGES: Language[] = ['PYTHON3', 'CPP', 'C', 'JAVA'];
 const DEFAULT_LANGUAGE: Language = 'PYTHON3';
 const LANG_PREF_KEY = 'cm:lang';
 

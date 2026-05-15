@@ -104,7 +104,7 @@ export type TrackDetail = {
 
 // ----- Submission -----
 
-export type Language = 'C' | 'CPP' | 'JAVA' | 'PYTHON3' | 'KOTLIN';
+export type Language = 'C' | 'CPP' | 'JAVA' | 'PYTHON3';
 
 export type SubmissionVerdict =
   | 'PENDING'

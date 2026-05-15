@@ -32,8 +32,4 @@ public class Main {
 input = sys.stdin.readline
 
 `,
-  KOTLIN: `fun main() {
-    val line = readLine()!!
-}
-`,
 };
