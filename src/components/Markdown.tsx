@@ -19,7 +19,12 @@ export function Markdown({ children, className }: Props) {
     <div
       className={cn(
         'prose prose-neutral max-w-none',
-        'prose-headings:scroll-mt-20 prose-headings:font-semibold',
+        // 모든 텍스트 색을 CSS 변수(text-foreground 등)로 override 해서 light/dark 자동 대응.
+        // prose 의 자체 light/dark 매핑 (prose-invert) 은 우리 토큰과 충돌하므로 쓰지 않음.
+        'prose-headings:text-foreground prose-headings:scroll-mt-20 prose-headings:font-semibold',
+        'prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-em:text-foreground',
+        'prose-table:text-foreground prose-th:text-foreground prose-td:text-foreground',
+        'prose-hr:border-border',
         'prose-pre:bg-muted prose-pre:text-foreground prose-pre:border prose-pre:border-border',
         'prose-code:bg-muted prose-code:text-foreground prose-code:rounded prose-code:px-1 prose-code:py-0.5 prose-code:text-[0.875em] prose-code:font-normal',
         'prose-code:before:content-none prose-code:after:content-none',
