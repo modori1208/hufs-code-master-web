@@ -85,7 +85,7 @@ export function UserMenu({ user }: { user: MemberProfile }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="flex flex-col gap-1 leading-tight">
+        <DropdownMenuLabel className="flex flex-col gap-1 px-3 py-3 leading-tight">
           <span className="font-medium">{displayName}</span>
           <span className="text-xs font-normal text-muted-foreground">
             {user.department}
