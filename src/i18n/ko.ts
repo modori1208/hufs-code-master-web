@@ -332,6 +332,30 @@ export const ko = {
       deleteFailed: '삭제에 실패했습니다.',
       tooLarge: '5MB 이하의 파일만 업로드 가능합니다.',
     },
+    social: {
+      githubAriaLabel: (username: string) => `GitHub: ${username}`,
+      twitterAriaLabel: (username: string) => `X: ${username}`,
+      linkedinAriaLabel: (username: string) => `LinkedIn: ${username}`,
+      editAriaLabel: 'SNS 계정 편집',
+      addCta: 'SNS 계정 연결',
+      dialog: {
+        title: 'SNS 계정 연결',
+        description:
+          '입력한 계정은 프로필 페이지의 가입일 옆에 아이콘으로 노출됩니다. 비워두면 해당 계정이 제거됩니다.',
+        githubLabel: 'GitHub',
+        githubPlaceholder: 'username',
+        twitterLabel: 'X (Twitter)',
+        twitterPlaceholder: 'username',
+        linkedinLabel: 'LinkedIn',
+        linkedinPlaceholder: 'vanity-slug',
+        githubHint: '영문·숫자·하이픈만 사용 가능합니다.',
+        twitterHint: '영문·숫자·언더스코어만 사용 가능합니다.',
+        linkedinHint: '/in/ 뒤의 영문·숫자·하이픈 부분을 입력하세요.',
+        submit: '저장',
+        saved: 'SNS 계정이 저장되었습니다.',
+        saveFailed: 'SNS 계정 저장에 실패했습니다.',
+      },
+    },
   },
 
   settings: {

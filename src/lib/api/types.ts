@@ -65,6 +65,12 @@ export type MemberProfile = {
   banned_until: string | null;
   /** 차단 사유 (있다면). */
   ban_reason: string | null;
+  /** GitHub 사용자명 (https://github.com/{value}). */
+  github_username: string | null;
+  /** X(Twitter) 사용자명 (https://x.com/{value}). */
+  twitter_username: string | null;
+  /** LinkedIn vanity slug (https://www.linkedin.com/in/{value}). */
+  linkedin_username: string | null;
 };
 
 // ----- Problem -----
@@ -201,6 +207,9 @@ export type UserPublicProfile = {
   last_solved_date: string | null;
   /** 차단된 회원 프로필 여부. 본인/관리자만 조회 가능하며 UI 에 제한 배너를 표시합니다. */
   restricted: boolean;
+  github_username: string | null;
+  twitter_username: string | null;
+  linkedin_username: string | null;
 };
 
 // ----- Activity -----

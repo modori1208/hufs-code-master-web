@@ -6,7 +6,9 @@ import {
   Camera,
   Clock,
   Flame,
+  Github,
   Image as ImageIcon,
+  Linkedin,
   ListChecks,
   Loader2,
   Pencil,
@@ -14,6 +16,7 @@ import {
   Shield,
   Trash2,
   Trophy,
+  Twitter,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -26,12 +29,27 @@ import {
   CardHeader,
 } from '@/components/ui/card';
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Textarea } from '@/components/ui/textarea';
 import { Container } from '@/components/layout/Container';
 import { Heatmap } from '@/components/profile/Heatmap';
@@ -40,6 +58,7 @@ import { t } from '@/i18n';
 import { ApiError } from '@/lib/api/client';
 import {
   deleteImage,
+  updateSocialAccounts,
   updateStatusMessage,
   uploadImage,
   type ImageKind,
@@ -232,10 +251,13 @@ export function UserPage() {
 
             <StatusMessage user={user} isOwner={isOwner} userId={user.id} />
 
-            <p className="mt-3 flex w-fit items-center gap-1.5 text-xs text-muted-foreground">
-              <CalendarDays className="size-3.5" />
-              {t.user.joinedAt(formatDate(user.joined_at))}
-            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <CalendarDays className="size-3.5" />
+                {t.user.joinedAt(formatDate(user.joined_at))}
+              </span>
+              <SocialAccounts user={user} isOwner={isOwner} />
+            </div>
           </div>
         </header>
 
@@ -551,5 +573,260 @@ function StatCard({ icon: Icon, label, value, stringValue, unit, accent }: StatC
       </CardHeader>
       <CardContent />
     </Card>
+  );
+}
+
+// ----- Social accounts (가입일 옆) -----
+
+type SocialAccountsProps = {
+  user: UserPublicProfile;
+  isOwner: boolean;
+};
+
+function SocialAccounts({ user, isOwner }: SocialAccountsProps) {
+  const [editing, setEditing] = useState(false);
+
+  const items: Array<{
+    key: 'github' | 'twitter' | 'linkedin';
+    username: string;
+    href: string;
+    icon: typeof Github;
+    ariaLabel: string;
+  }> = [];
+  if (user.github_username) {
+    items.push({
+      key: 'github',
+      username: user.github_username,
+      href: `https://github.com/${user.github_username}`,
+      icon: Github,
+      ariaLabel: t.user.social.githubAriaLabel(user.github_username),
+    });
+  }
+  if (user.twitter_username) {
+    items.push({
+      key: 'twitter',
+      username: user.twitter_username,
+      href: `https://x.com/${user.twitter_username}`,
+      icon: Twitter,
+      ariaLabel: t.user.social.twitterAriaLabel(user.twitter_username),
+    });
+  }
+  if (user.linkedin_username) {
+    items.push({
+      key: 'linkedin',
+      username: user.linkedin_username,
+      href: `https://www.linkedin.com/in/${user.linkedin_username}`,
+      icon: Linkedin,
+      ariaLabel: t.user.social.linkedinAriaLabel(user.linkedin_username),
+    });
+  }
+
+  if (items.length === 0 && !isOwner) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+      {items.map(({ key, href, username, icon: Icon, ariaLabel }) => (
+        <Tooltip key={key}>
+          <TooltipTrigger asChild>
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={ariaLabel}
+              className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Icon className="size-3.5" />
+            </a>
+          </TooltipTrigger>
+          <TooltipContent>@{username}</TooltipContent>
+        </Tooltip>
+      ))}
+      {isOwner ? (
+        items.length > 0 ? (
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            aria-label={t.user.social.editAriaLabel}
+            className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <Pencil className="size-3" />
+          </button>
+        ) : (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setEditing(true)}
+            className="-ml-1 h-7 px-2 text-xs text-muted-foreground"
+          >
+            <Plus className="size-3.5" />
+            {t.user.social.addCta}
+          </Button>
+        )
+      ) : null}
+      {isOwner ? (
+        <SocialAccountsDialog
+          open={editing}
+          onOpenChange={setEditing}
+          user={user}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+const GITHUB_PATTERN = /^[a-zA-Z0-9-]*$/;
+const TWITTER_PATTERN = /^[a-zA-Z0-9_]*$/;
+const LINKEDIN_PATTERN = /^[a-zA-Z0-9-]*$/;
+
+type SocialAccountsDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  user: UserPublicProfile;
+};
+
+function SocialAccountsDialog({ open, onOpenChange, user }: SocialAccountsDialogProps) {
+  const queryClient = useQueryClient();
+  const [github, setGithub] = useState(user.github_username ?? '');
+  const [twitter, setTwitter] = useState(user.twitter_username ?? '');
+  const [linkedin, setLinkedin] = useState(user.linkedin_username ?? '');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setGithub(user.github_username ?? '');
+      setTwitter(user.twitter_username ?? '');
+      setLinkedin(user.linkedin_username ?? '');
+      setErrorMessage(null);
+    }
+  }, [open, user.github_username, user.twitter_username, user.linkedin_username]);
+
+  const mutation = useMutation({
+    mutationFn: () =>
+      updateSocialAccounts({
+        github: github.trim() || null,
+        twitter: twitter.trim() || null,
+        linkedin: linkedin.trim() || null,
+      }),
+    onSuccess: (profile) => {
+      queryClient.setQueryData(AUTH_QUERY_KEY, profile);
+      queryClient.setQueryData<UserPublicProfile | undefined>(
+        ['user', user.id],
+        (prev) =>
+          prev
+            ? {
+                ...prev,
+                github_username: profile.github_username,
+                twitter_username: profile.twitter_username,
+                linkedin_username: profile.linkedin_username,
+              }
+            : prev,
+      );
+      toast.success(t.user.social.dialog.saved);
+      onOpenChange(false);
+    },
+    onError: (err) => {
+      setErrorMessage(err instanceof ApiError ? err.message : t.user.social.dialog.saveFailed);
+    },
+  });
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    const trimmedGithub = github.trim();
+    const trimmedTwitter = twitter.trim();
+    const trimmedLinkedin = linkedin.trim();
+    if (trimmedGithub && !GITHUB_PATTERN.test(trimmedGithub)) {
+      setErrorMessage(t.user.social.dialog.githubHint);
+      return;
+    }
+    if (trimmedTwitter && !TWITTER_PATTERN.test(trimmedTwitter)) {
+      setErrorMessage(t.user.social.dialog.twitterHint);
+      return;
+    }
+    if (trimmedLinkedin && !LINKEDIN_PATTERN.test(trimmedLinkedin)) {
+      setErrorMessage(t.user.social.dialog.linkedinHint);
+      return;
+    }
+    mutation.mutate();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t.user.social.dialog.title}</DialogTitle>
+          <DialogDescription>{t.user.social.dialog.description}</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="social-github" className="flex items-center gap-2">
+              <Github className="size-4" />
+              {t.user.social.dialog.githubLabel}
+            </Label>
+            <Input
+              id="social-github"
+              value={github}
+              onChange={(e) => setGithub(e.target.value)}
+              maxLength={39}
+              placeholder={t.user.social.dialog.githubPlaceholder}
+              autoComplete="off"
+            />
+            <p className="text-xs text-muted-foreground">{t.user.social.dialog.githubHint}</p>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="social-twitter" className="flex items-center gap-2">
+              <Twitter className="size-4" />
+              {t.user.social.dialog.twitterLabel}
+            </Label>
+            <Input
+              id="social-twitter"
+              value={twitter}
+              onChange={(e) => setTwitter(e.target.value)}
+              maxLength={15}
+              placeholder={t.user.social.dialog.twitterPlaceholder}
+              autoComplete="off"
+            />
+            <p className="text-xs text-muted-foreground">{t.user.social.dialog.twitterHint}</p>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="social-linkedin" className="flex items-center gap-2">
+              <Linkedin className="size-4" />
+              {t.user.social.dialog.linkedinLabel}
+            </Label>
+            <Input
+              id="social-linkedin"
+              value={linkedin}
+              onChange={(e) => setLinkedin(e.target.value)}
+              maxLength={100}
+              placeholder={t.user.social.dialog.linkedinPlaceholder}
+              autoComplete="off"
+            />
+            <p className="text-xs text-muted-foreground">{t.user.social.dialog.linkedinHint}</p>
+          </div>
+          {errorMessage ? (
+            <Alert variant="destructive">
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          ) : null}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+              disabled={mutation.isPending}
+            >
+              {t.common.cancel}
+            </Button>
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending ? <Loader2 className="size-4 animate-spin" /> : null}
+              {t.user.social.dialog.submit}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

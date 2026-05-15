@@ -17,6 +17,21 @@ export function updateStatusMessage(message: string | null): Promise<MemberProfi
   return apiPut<MemberProfile>('/api/v1/me/status-message', { message });
 }
 
+export type UpdateSocialAccountsRequest = {
+  github: string | null;
+  twitter: string | null;
+  linkedin: string | null;
+};
+
+/**
+ * SNS 계정 사용자명 일괄 설정/변경. 빈 문자열/null 은 해당 계정 제거.
+ */
+export function updateSocialAccounts(
+  request: UpdateSocialAccountsRequest,
+): Promise<MemberProfile> {
+  return apiPut<MemberProfile>('/api/v1/me/social-accounts', request);
+}
+
 export type ImageKind = 'profile' | 'cover';
 
 /**
