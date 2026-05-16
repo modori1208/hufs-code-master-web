@@ -16,7 +16,7 @@ import { DIFFICULTY_BADGE, DIFFICULTY_LABEL } from '@/lib/labels';
 import { cn } from '@/lib/utils';
 import type { ProblemDetail } from '@/lib/api/types';
 
-// 제출 패널(에디터 + Monaco) 은 사용자가 [제출] 탭을 누를 때만 로드됩니다.
+// 제출 패널(에디터 + Monaco)은 사용자가 [제출] 탭을 누를 때만 로드됩니다.
 const SubmissionPanel = lazy(() =>
   import('@/features/submission/components/SubmissionPanel').then((m) => ({
     default: m.SubmissionPanel,

@@ -6,8 +6,8 @@ import type { Difficulty, Language, SubmissionVerdict } from '@/lib/api/types';
  * <p>관리자(/admin) 영역은 운영자 전용이므로 번역하지 않고 페이지 내부에 그대로 둡니다.
  * 이 사전은 일반 사용자가 보는 모든 화면의 사용자 노출 문자열만 다룹니다.
  *
- * <p>다국어 추가 시 같은 구조의 {@link Messages} 를 만족하는 별도 파일 (`en.ts` 등) 을
- * 추가하고 {@code src/i18n/index.ts} 의 {@code t} export 를 locale 에 따라 선택하면 됩니다.
+ * <p>다국어 추가 시 같은 구조의 {@link Messages}를 만족하는 별도 파일 (`en.ts` 등)을
+ * 추가하고 {@code src/i18n/index.ts}의 {@code t} export를 locale에 따라 선택하면 됩니다.
  */
 export const ko = {
   // 도메인 enum 라벨
@@ -165,7 +165,7 @@ export const ko = {
       heroLine1: '알고리즘은 매일,',
       heroLine2: '함께 더 깊이.',
       subtitle:
-        '트랙별 학습, 매주 갱신되는 스트릭, 그리고 AI 어시스턴트와 함께 HUFS CODE MASTER 에서 문제 풀이를 마스터해보세요.',
+        '트랙별 학습, 매주 갱신되는 스트릭, 그리고 AI 어시스턴트와 함께 HUFS CODE MASTER에서 문제 풀이를 마스터해보세요.',
       startCta: '시작하기 · HUFS 이메일로 로그인',
       features: {
         tracks: {

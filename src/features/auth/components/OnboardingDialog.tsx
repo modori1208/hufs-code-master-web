@@ -31,7 +31,7 @@ import type { MemberProfile } from '@/lib/api/types';
  *   <li>닉네임 미설정 → 닉네임 step</li>
  * </ul>
  *
- * <p>신규 가입자는 2-step, 재동의만 필요한 기존 사용자는 1-step 으로 자동 구성되며,
+ * <p>신규 가입자는 2-step, 재동의만 필요한 기존 사용자는 1-step으로 자동 구성되며,
  * 단일 step 인 경우 진행률 표시가 숨겨집니다. ESC/외부 클릭으로 닫을 수 없는 강제 모달.
  */
 type StepId = 'policy' | 'nickname';
@@ -53,8 +53,8 @@ export function OnboardingDialog() {
   const remaining = computeRemainingSteps(user);
   const open = remaining.length > 0;
 
-  // 초기 진입 시점의 총 step 수를 캡처해 진행률 ("1/2", "2/2") 의 분모로 사용.
-  // step 완료로 remaining.length 가 줄어도 totalSteps 는 그대로 유지됩니다.
+  // 초기 진입 시점의 총 step 수를 캡처해 진행률 ("1/2", "2/2")의 분모로 사용.
+  // step 완료로 remaining.length가 줄어도 totalSteps는 그대로 유지됩니다.
   // 모달이 닫히면 (open=false) 초기화하여 다음 진입 시 다시 캡처되도록 합니다.
   const [totalSteps, setTotalSteps] = useState(0);
   useEffect(() => {
@@ -82,7 +82,7 @@ export function OnboardingDialog() {
           <ProgressBar current={currentStepNumber} total={totalSteps} />
         ) : null}
         <AnimatedHeight>
-          {/* key 가 바뀌면 React 가 새 노드로 마운트하므로 animate-in 클래스가 진입 애니메이션을 재생합니다. */}
+          {/* key가 바뀌면 React가 새 노드로 마운트하므로 animate-in 클래스가 진입 애니메이션을 재생합니다. */}
           <div
             key={currentStep}
             className="grid animate-in fade-in-0 slide-in-from-bottom-2 gap-6 duration-300"
@@ -99,10 +99,10 @@ export function OnboardingDialog() {
   );
 }
 
-// ----- 자식 콘텐츠 높이를 측정해 자신의 height 를 transition 으로 따라가게 하는 래퍼 -----
+// ----- 자식 콘텐츠 높이를 측정해 자신의 height를 transition으로 따라가게 하는 래퍼 -----
 //
-// CSS 의 height: auto 는 native transition 이 안 되므로, ResizeObserver 로 inner 콘텐츠를
-// 측정해 explicit px 값을 부여하고 transition 으로 부드럽게 변경합니다. step 전환 시 모달
+// CSS의 height: auto는 native transition이 안 되므로, ResizeObserver로 inner 콘텐츠를
+// 측정해 explicit px 값을 부여하고 transition으로 부드럽게 변경합니다. step 전환 시 모달
 // 자체가 새 높이로 자연스럽게 줄어들거나 늘어납니다.
 
 function AnimatedHeight({ children }: { children: ReactNode }) {
@@ -124,7 +124,7 @@ function AnimatedHeight({ children }: { children: ReactNode }) {
 
   return (
     <div
-      // overflow: clip + clip-margin 으로 focus ring 등 박스 바깥으로 살짝 삐져나오는
+      // overflow: clip + clip-margin으로 focus ring 등 박스 바깥으로 살짝 삐져나오는
       // 장식 요소는 가리지 않으면서, 콘텐츠 자체는 wrapper 박스를 넘으면 잘립니다.
       className="transition-[height] duration-300 ease-out [overflow:clip] [overflow-clip-margin:6px]"
       style={height !== null ? { height: `${height}px` } : undefined}
@@ -259,7 +259,7 @@ function NicknameStep({ user }: StepProps) {
   const [value, setValue] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // 진입 시 실명을 기본값으로 채워줌. 규칙(영문/숫자/한글, 2~12자) 에 맞지 않으면 빈 값.
+  // 진입 시 실명을 기본값으로 채워줌. 규칙(영문/숫자/한글, 2~12자)에 맞지 않으면 빈 값.
   useEffect(() => {
     const fallback = user.name;
     const ok =

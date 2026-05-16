@@ -67,7 +67,7 @@ export function SubmissionPanel({ problemId }: { problemId: number }) {
   const [code, setCode] = useState<string>(() => loadCode(problemId, language));
   const skipNextLoad = useRef<boolean>(true);
 
-  // problemId/language 가 변할 때 해당 조합의 저장 코드를 다시 불러옴.
+  // problemId/language가 변할 때 해당 조합의 저장 코드를 다시 불러옴.
   // 첫 마운트는 useState 초기값이 이미 로드했으므로 스킵.
   useEffect(() => {
     if (skipNextLoad.current) {

@@ -34,7 +34,7 @@ export function formatRelativeTime(iso: string): string {
 /**
  * 자세한 절대 시각 표기 (예: "2026. 5. 17. 14:32:45").
  *
- * <p>{@link formatRelativeTime} 과 함께 hover 툴팁에서 정확한 시간을 보여줄 때 사용합니다.
+ * <p>{@link formatRelativeTime}과 함께 hover 툴팁에서 정확한 시간을 보여줄 때 사용합니다.
  *
  * @param iso ISO 형식 datetime 문자열
  * @returns 사람이 읽을 수 있는 절대 시각 문자열

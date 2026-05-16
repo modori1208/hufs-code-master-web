@@ -41,8 +41,8 @@ export function HomePage() {
   }
 
   if (user) {
-    // 닉네임이 없는 사용자도 홈은 보여줍니다 (AppLayout 의 모달이 위에 떠서 인터랙션 차단).
-    // AuthenticatedHome 의 인사말 등은 nickname ?? name 으로 안전하게 처리되어 있습니다.
+    // 닉네임이 없는 사용자도 홈은 보여줍니다 (AppLayout의 모달이 위에 떠서 인터랙션 차단).
+    // AuthenticatedHome의 인사말 등은 nickname ?? name으로 안전하게 처리되어 있습니다.
     return <AuthenticatedHome user={user} />;
   }
 

@@ -2,7 +2,7 @@ import { apiGet, apiPost } from '@/lib/api/client';
 import { config } from '@/lib/config';
 import type { MemberProfile } from '@/lib/api/types';
 
-/** 프론트엔드 콜백 라우트. IdP 의 redirect_uri 로 사용됩니다. */
+/** 프론트엔드 콜백 라우트. IdP의 redirect_uri로 사용됩니다. */
 export const SSO_CALLBACK_PATH = '/auth/callback';
 
 const STATE_STORAGE_KEY = 'cm:sso:state';
@@ -19,8 +19,8 @@ function generateState(): string {
 }
 
 /**
- * IdP authorize 페이지로 사용자를 보냅니다. state 와 로그인 후 이동할 경로를
- * sessionStorage 에 저장하여 콜백에서 검증/활용합니다.
+ * IdP authorize 페이지로 사용자를 보냅니다. state와 로그인 후 이동할 경로를
+ * sessionStorage에 저장하여 콜백에서 검증/활용합니다.
  *
  * @param next 로그인 성공 후 이동할 프론트엔드 경로
  */
@@ -39,7 +39,7 @@ export function startSsoLogin(next: string = '/'): void {
 }
 
 /**
- * sessionStorage 에 저장된 state 와 next 를 꺼내 반환합니다. 한 번 호출하면 삭제됩니다.
+ * sessionStorage에 저장된 state와 next를 꺼내 반환합니다. 한 번 호출하면 삭제됩니다.
  */
 export function consumeSsoState(): { state: string | null; next: string } {
   const state = sessionStorage.getItem(STATE_STORAGE_KEY);
@@ -50,7 +50,7 @@ export function consumeSsoState(): { state: string | null; next: string } {
 }
 
 /**
- * 콜백에서 받은 code 를 백엔드에 보내 세션을 발급받습니다.
+ * 콜백에서 받은 code를 백엔드에 보내 세션을 발급받습니다.
  */
 export function exchangeCode(code: string): Promise<MemberProfile> {
   return apiPost<MemberProfile>('/api/v1/auth/exchange', { code });

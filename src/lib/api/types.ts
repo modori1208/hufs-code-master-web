@@ -16,11 +16,11 @@ export type PrivacyPolicy = {
 };
 
 /**
- * Spring Data 의 `Page<T>` 가 PagedModel(VIA_DTO) 로 직렬화된 형태 (SNAKE_CASE 변환 후).
- * 백엔드 Application 에 {@code @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)}
- * 가 적용되어 있어, content 와 page 메타가 분리되어 직렬화됩니다.
+ * Spring Data의 `Page<T>` 가 PagedModel(VIA_DTO)로 직렬화된 형태 (SNAKE_CASE 변환 후).
+ * 백엔드 Application에 {@code @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)}
+ * 가 적용되어 있어, content와 page 메타가 분리되어 직렬화됩니다.
  *
- * first / last / number_of_elements 는 응답에 없으므로 헬퍼({@link isFirstPage}, {@link isLastPage})
+ * first / last / number_of_elements는 응답에 없으므로 헬퍼({@link isFirstPage}, {@link isLastPage})
  * 로 계산합니다.
  */
 export type Page<T> = {
@@ -110,9 +110,9 @@ export type ProblemSample = {
 /**
  * 문제별 채점 방식.
  *
- * - LINE_DIFF: 줄 단위 비교 (기본). 각 줄 trailing whitespace 와 파일 끝 빈 줄을 무시.
+ * - LINE_DIFF: 줄 단위 비교 (기본). 각 줄 trailing whitespace와 파일 끝 빈 줄을 무시.
  * - TOKEN: 공백 무시 토큰 단위 비교.
- * - FLOAT_EPS: 부동소수점 허용오차 비교. compare_arg 에 epsilon (예: "1e-6").
+ * - FLOAT_EPS: 부동소수점 허용오차 비교. compare_arg에 epsilon (예: "1e-6").
  * - CUSTOM: 운영진이 업로드한 sh 스크립트로 채점.
  */
 export type CompareMode = 'LINE_DIFF' | 'TOKEN' | 'FLOAT_EPS' | 'CUSTOM';
@@ -129,9 +129,9 @@ export type ProblemDetail = {
    * `default-property-inclusion: non_null` 정책에 의해 필드 자체가 빠지므로 undefined.
    */
   compare_mode?: CompareMode;
-  /** 채점 파라미터 (FLOAT_EPS 에서 epsilon). admin 만 노출. */
+  /** 채점 파라미터 (FLOAT_EPS에서 epsilon). admin만 노출. */
   compare_arg?: string;
-  /** CUSTOM 모드에서 스크립트가 업로드된 상태인지. admin 만 노출. */
+  /** CUSTOM 모드에서 스크립트가 업로드된 상태인지. admin만 노출. */
   has_custom_comparator?: boolean;
   samples: ProblemSample[];
 };
@@ -194,7 +194,7 @@ export type MyProblemStatus = {
 };
 
 /**
- * 잔디(heatmap) 응답. 풀이가 1건 이상인 날짜만 포함됩니다.
+ * 잔디(heatmap) 응답. 풀이가 1 건 이상인 날짜만 포함됩니다.
  */
 export type UserHeatmap = {
   days: Array<{
@@ -237,7 +237,7 @@ export type UserPublicProfile = {
   longest_streak: number;
   weekly_solve_count: number;
   last_solved_date: string | null;
-  /** 차단된 회원 프로필 여부. 본인/관리자만 조회 가능하며 UI 에 제한 배너를 표시합니다. */
+  /** 차단된 회원 프로필 여부. 본인/관리자만 조회 가능하며 UI에 제한 배너를 표시합니다. */
   restricted: boolean;
   github_username: string | null;
   twitter_username: string | null;
@@ -279,14 +279,14 @@ export type CreateProblemRequest = {
   difficulty: Difficulty;
   /** 채점 방식. 생략하면 백엔드 기본값 LINE_DIFF. */
   compare_mode?: CompareMode;
-  /** FLOAT_EPS 의 epsilon 등. */
+  /** FLOAT_EPS의 epsilon 등. */
   compare_arg?: string | null;
 };
 
 export type UpdateProblemRequest = CreateProblemRequest;
 
 export type UploadComparatorRequest = {
-  /** sh 스크립트 본문. shebang(#!) 으로 시작해야 함. */
+  /** sh 스크립트 본문. shebang(#!)으로 시작해야 함. */
   script: string;
 };
 

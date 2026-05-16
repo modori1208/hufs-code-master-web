@@ -6,7 +6,7 @@ import { getMyProblemStatus } from '@/features/submission/api/submissions';
 export type ProblemStatus = 'solved' | 'attempted' | 'none';
 
 /**
- * 본인의 풀이 상태를 가져와 문제 ID 로 빠르게 lookup 할 수 있는 함수를 반환합니다.
+ * 본인의 풀이 상태를 가져와 문제 ID로 빠르게 lookup 할 수 있는 함수를 반환합니다.
  *
  * <p>로그인 상태일 때만 호출하며, 5분간 cache 유지.
  */

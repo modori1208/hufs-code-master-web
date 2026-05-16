@@ -42,7 +42,7 @@ const NAV_ITEMS: Array<{ to: string; label: string }> = [
 ];
 
 /**
- * 모바일(md 미만) 사용자에게 노출되는 햄버거 메뉴. 우측에서 슬라이드 인하는 sheet 로
+ * 모바일(md 미만) 사용자에게 노출되는 햄버거 메뉴. 우측에서 슬라이드 인하는 sheet로
  * nav 항목을 담아 늘어나도 좁은 화면에서 깔끔하게 처리됩니다.
  */
 function MobileNav() {
@@ -118,7 +118,7 @@ export function Header() {
             className="hidden h-6 w-auto dark:block"
           />
         </Link>
-        {/* 데스크탑 인라인 nav — md 이상에서만 노출. 메뉴 항목이 늘어나도 모바일에선 sheet 로 들어갑니다. */}
+        {/* 데스크탑 인라인 nav — md 이상에서만 노출. 메뉴 항목이 늘어나도 모바일에선 sheet로 들어갑니다. */}
         {isAuthenticated ? (
           <nav className="hidden items-center gap-1 md:flex">
             <NavItem to="/problems">{t.layout.nav.problems}</NavItem>

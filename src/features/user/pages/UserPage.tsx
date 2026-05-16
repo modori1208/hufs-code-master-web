@@ -627,7 +627,7 @@ function ProfileEditDialog({ open, onOpenChange, user }: ProfileEditDialogProps)
   const [linkedin, setLinkedin] = useState(user.linkedin_username ?? '');
   // 배경 이미지는 "저장" 누르기 전까지 서버에 반영하지 않습니다.
   // `coverFile`: 새로 선택한 파일 (있으면 저장 시 업로드)
-  // `coverDeletePending`: 현재 cover 를 제거하기로 표시 (있으면 저장 시 삭제 호출)
+  // `coverDeletePending`: 현재 cover를 제거하기로 표시 (있으면 저장 시 삭제 호출)
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverCropFile, setCoverCropFile] = useState<File | null>(null);
   const [coverDeletePending, setCoverDeletePending] = useState(false);

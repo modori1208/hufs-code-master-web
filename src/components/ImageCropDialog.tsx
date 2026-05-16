@@ -24,7 +24,7 @@ type ImageCropDialogProps = {
   maxOutputSize: number;
   /** 다이얼로그 제목 ('profile' 이면 프로필 라벨, 'cover' 면 배경 라벨). */
   variant: 'profile' | 'cover';
-  /** 적용 시 잘린 Blob 을 전달. 호출 후 다이얼로그는 닫힘. */
+  /** 적용 시 잘린 Blob을 전달. 호출 후 다이얼로그는 닫힘. */
   onConfirm: (blob: Blob) => void;
   /** 취소/닫기. */
   onCancel: () => void;

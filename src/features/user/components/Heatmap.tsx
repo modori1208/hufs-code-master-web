@@ -10,7 +10,7 @@ const WEEKS = 53;
 const MOBILE_WEEKS = 12;
 const DAYS_PER_WEEK = 7;
 
-/** count 를 0~4 level 로 매핑. */
+/** count를 0~4 level로 매핑. */
 function levelOf(count: number): 0 | 1 | 2 | 3 | 4 {
   if (count <= 0) return 0;
   if (count === 1) return 1;

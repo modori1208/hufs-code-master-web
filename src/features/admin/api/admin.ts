@@ -106,7 +106,7 @@ export function uploadComparator(
 }
 
 /**
- * 커스텀 채점 스크립트 제거. 채점 방식이 LINE_DIFF 로 되돌아갑니다.
+ * 커스텀 채점 스크립트 제거. 채점 방식이 LINE_DIFF로 되돌아갑니다.
  */
 export function deleteComparator(problemId: number): Promise<void> {
   return apiDelete<void>(`/api/v1/admin/problems/${problemId}/comparator`);

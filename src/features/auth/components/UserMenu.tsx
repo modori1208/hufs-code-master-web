@@ -59,8 +59,8 @@ export function UserMenu({ user }: { user: MemberProfile }) {
   };
 
   return (
-    // modal={false}: scroll lock 비활성화. html 의 scrollbar-gutter:stable 와 충돌해서
-    // 메뉴 열 때 사이트가 좌측으로 밀리는 현상을 막습니다 (드롭다운엔 modality 가 불필요).
+    // modal={false}: scroll lock 비활성화. html의 scrollbar-gutter:stable와 충돌해서
+    // 메뉴 열 때 사이트가 좌측으로 밀리는 현상을 막습니다 (드롭다운엔 modality가 불필요).
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button

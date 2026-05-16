@@ -20,7 +20,7 @@ const DISMISS_KEY_PREFIX = 'cm:banned-dismissed:';
 /**
  * 차단된 사용자에게 로그인 시 한 번 띄우는 안내 모달.
  * <ul>
- *   <li>같은 세션에서 한 번만 자동 표시 (sessionStorage 로 추적)</li>
+ *   <li>같은 세션에서 한 번만 자동 표시 (sessionStorage로 추적)</li>
  *   <li>ESC · X 버튼 · "확인" 버튼으로 닫을 수 있음. 바깥 클릭으로는 닫히지 않음</li>
  *   <li>본인 프로필의 제한 배너 클릭 등 외부 트리거({@link useBannedDialog})로 다시 열 수 있음</li>
  * </ul>

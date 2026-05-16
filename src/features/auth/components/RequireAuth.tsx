@@ -36,7 +36,7 @@ export function RequireAuth({ children, adminOnly = false }: RequireAuthProps) {
     return <Navigate to="/" replace />;
   }
 
-  // 닉네임 미설정 사용자는 AppLayout 의 NicknameSetupDialog 가 모달로 떠서
+  // 닉네임 미설정 사용자는 AppLayout의 NicknameSetupDialog가 모달로 떠서
   // 사이트 사용을 자동 차단합니다. 별도 리다이렉트는 필요 없습니다.
 
   return <>{children}</>;

@@ -309,7 +309,7 @@ function AddProblemDialog({
     }
   }, [open, nextOrderIndex]);
 
-  // 후보 문제 목록 — size=200 로 충분히 가져옴. 더 많으면 검색 UI 필요.
+  // 후보 문제 목록 — size=200로 충분히 가져옴. 더 많으면 검색 UI 필요.
   const candidatesQuery = useQuery({
     queryKey: ['admin', 'track-problem-candidates'],
     queryFn: () => listProblems({ page: 0, size: 200, sort: 'id,desc' }),

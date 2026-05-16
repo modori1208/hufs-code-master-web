@@ -1,5 +1,5 @@
 /**
- * react-easy-crop 의 onCropComplete 가 넘겨주는 픽셀 단위 crop 영역.
+ * react-easy-crop의 onCropComplete가 넘겨주는 픽셀 단위 crop 영역.
  */
 export type CropArea = {
   x: number;
@@ -18,13 +18,13 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 }
 
 /**
- * 원본 이미지를 주어진 crop 영역으로 잘라 JPEG Blob 으로 변환합니다.
+ * 원본 이미지를 주어진 crop 영역으로 잘라 JPEG Blob으로 변환합니다.
  *
- * <p>{@code maxSize} 가 지정되면 가로/세로 중 긴 쪽을 이 값으로 맞춰 다운스케일.
+ * <p>{@code maxSize}가 지정되면 가로/세로 중 긴 쪽을 이 값으로 맞춰 다운스케일.
  * 출력 비율은 crop 영역의 비율과 동일합니다.
  *
  * @param imageSrc 원본 이미지 URL (object URL 가능)
- * @param crop 잘라낼 픽셀 영역 (react-easy-crop 의 croppedAreaPixels)
+ * @param crop 잘라낼 픽셀 영역 (react-easy-crop의 croppedAreaPixels)
  * @param maxSize 출력 이미지의 최대 변 크기 (px)
  */
 export async function cropImageToBlob(

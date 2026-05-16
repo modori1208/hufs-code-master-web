@@ -1,10 +1,10 @@
 /**
  * SNS 브랜드 아이콘 SVG 컴포넌트.
  *
- * <p>lucide-react v1 부터 GitHub/Twitter/LinkedIn 등 브랜드 아이콘이 상표권 이슈로 제거되어
- * Simple Icons (CC0 라이선스) 의 공식 마크를 직접 인라인 SVG 로 사용합니다.
+ * <p>lucide-react v1부터 GitHub/Twitter/LinkedIn 등 브랜드 아이콘이 상표권 이슈로 제거되어
+ * Simple Icons (CC0 라이선스)의 공식 마크를 직접 인라인 SVG로 사용합니다.
  *
- * <p>모두 {@code fill="currentColor"} 로 색을 부모 텍스트 색에 맞추고, 24x24 viewBox 를 사용해
+ * <p>모두 {@code fill="currentColor"}로 색을 부모 텍스트 색에 맞추고, 24x24 viewBox를 사용해
  * lucide 아이콘과 동일한 사이즈 클래스 ({@code size-4} 등) 로 제어 가능합니다.
  */
 

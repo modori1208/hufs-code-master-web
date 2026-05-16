@@ -9,11 +9,11 @@ import { consumeSsoState, exchangeCode } from '@/features/auth/api/auth';
 import { ApiError } from '@/lib/api/client';
 
 /**
- * 같은 code 가 두 번 처리되는 것을 막기 위한 module-level 가드.
+ * 같은 code가 두 번 처리되는 것을 막기 위한 module-level 가드.
  *
- * <p>React StrictMode 의 dev 시 컴포넌트 unmount/remount, 또는 사용자가 콜백 URL 을 새로
- * 고침하는 경우 같은 일회용 code 로 IdP 를 두 번 호출하면 두 번째는 "Invalid or expired
- * code" 로 실패합니다. 컴포넌트 ref 는 새 인스턴스에서 초기화되므로 모듈 스코프로 처리.
+ * <p>React StrictMode의 dev 시 컴포넌트 unmount/remount, 또는 사용자가 콜백 URL을 새로
+ * 고침하는 경우 같은 일회용 code로 IdP를 두 번 호출하면 두 번째는 "Invalid or expired
+ * code" 로 실패합니다. 컴포넌트 ref는 새 인스턴스에서 초기화되므로 모듈 스코프로 처리.
  */
 const inflightCodes = new Set<string>();
 const handledCodes = new Set<string>();

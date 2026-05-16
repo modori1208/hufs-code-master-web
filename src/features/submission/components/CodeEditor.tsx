@@ -5,7 +5,7 @@ import { t } from '@/i18n';
 import type { Language } from '@/lib/api/types';
 
 /**
- * Monaco language ID 매핑. 백엔드 enum 과 다를 수 있습니다.
+ * Monaco language ID 매핑. 백엔드 enum과 다를 수 있습니다.
  */
 const MONACO_LANG: Record<Language, string> = {
   C: 'c',
@@ -69,7 +69,7 @@ export function CodeEditor({ value, onChange, language, height = 480 }: Props) {
   );
 }
 
-// Monaco 가 로드되기 전 보이는 배경색을 테마에 맞춰 잡아줍니다.
+// Monaco가 로드되기 전 보이는 배경색을 테마에 맞춰 잡아줍니다.
 function cnContainer(isDark: boolean): string {
   const base = 'overflow-hidden rounded-md border border-border';
   return isDark ? `${base} bg-[#1e1e1e]` : `${base} bg-[#fffffe]`;

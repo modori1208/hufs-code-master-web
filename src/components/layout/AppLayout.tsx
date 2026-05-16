@@ -42,7 +42,7 @@ export function AppLayout() {
 
       {/* 차단된 사용자에게 로그인 시 한 번 띄우는 안내 모달 (닫을 수 있음). */}
       <BannedScreenDialog />
-      {/* 처리방침 동의·닉네임 설정 등 강제 온보딩 단계를 위저드로 처리. 필요한 step 만 동적 포함. */}
+      {/* 처리방침 동의·닉네임 설정 등 강제 온보딩 단계를 위저드로 처리. 필요한 step만 동적 포함. */}
       <OnboardingDialog />
     </div>
   );

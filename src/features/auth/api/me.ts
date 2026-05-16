@@ -24,7 +24,7 @@ export type UpdateSocialAccountsRequest = {
 };
 
 /**
- * SNS 계정 사용자명 일괄 설정/변경. 빈 문자열/null 은 해당 계정 제거.
+ * SNS 계정 사용자명 일괄 설정/변경. 빈 문자열/null은 해당 계정 제거.
  */
 export function updateSocialAccounts(
   request: UpdateSocialAccountsRequest,
@@ -42,7 +42,7 @@ export function agreeCurrentPolicy(): Promise<MemberProfile> {
 export type ImageKind = 'profile' | 'cover';
 
 /**
- * 프로필/배경 이미지 업로드. multipart/form-data 로 직접 전송하므로 fetch 를 따로 호출합니다.
+ * 프로필/배경 이미지 업로드. multipart/form-data로 직접 전송하므로 fetch를 따로 호출합니다.
  */
 export async function uploadImage(
   kind: ImageKind,

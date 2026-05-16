@@ -40,7 +40,7 @@ const COMPARE_MODE_HELP: Record<CompareMode, string> = {
     '각 줄 끝 공백과 파일 끝 빈 줄을 무시한 줄 단위 비교. 대부분의 표준 PS 문제에 적합합니다.',
   TOKEN: '공백/줄바꿈 위치를 모두 무시하고 토큰 시퀀스만 비교합니다. 격자 출력 등에는 부적합합니다.',
   FLOAT_EPS:
-    '토큰별로 비교하되, 양쪽이 모두 숫자인 경우 |x − y| ≤ ε 으로 판정합니다. 오른쪽에 epsilon 을 지정하세요.',
+    '토큰별로 비교하되, 양쪽이 모두 숫자인 경우 |x − y| ≤ ε 으로 판정합니다. 오른쪽에 epsilon을 지정하세요.',
   CUSTOM:
     '운영진이 업로드한 sh 스크립트로 채점합니다. 모드 전환은 폼 아래 "커스텀 채점기" 섹션에서 스크립트를 업로드한 뒤에 가능합니다.',
 };
@@ -66,7 +66,7 @@ export function ProblemForm({ initial, submitLabel, onSubmit }: Props) {
   const [busy, setBusy] = useState(false);
 
   const hasCustomScript = initial?.has_custom_comparator ?? false;
-  // 신규 생성에서는 CUSTOM 을 선택할 수 없음 (스크립트 업로드는 문제 생성 후에만 가능).
+  // 신규 생성에서는 CUSTOM을 선택할 수 없음 (스크립트 업로드는 문제 생성 후에만 가능).
   const allowCustom = !!initial && hasCustomScript;
   const availableModes: CompareMode[] = (
     ['LINE_DIFF', 'TOKEN', 'FLOAT_EPS', 'CUSTOM'] as const
@@ -203,7 +203,7 @@ export function ProblemForm({ initial, submitLabel, onSubmit }: Props) {
           rows={14}
           className="font-mono text-sm"
           placeholder={
-            '문제 설명을 Markdown 으로 작성하세요.\n\n입력/출력 형식 설명도 이 본문 안에 함께 적습니다. 예시:\n\n## 입력\n첫째 줄에 두 정수 A, B 가 공백으로 구분되어 주어진다.\n\n## 출력\nA + B 를 출력한다.'
+            '문제 설명을 Markdown으로 작성하세요.\n\n입력/출력 형식 설명도 이 본문 안에 함께 적습니다. 예시:\n\n## 입력\n첫째 줄에 두 정수 A, B가 공백으로 구분되어 주어진다.\n\n## 출력\nA + B를 출력한다.'
           }
         />
       </div>

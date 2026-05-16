@@ -2,7 +2,7 @@ import { apiGet } from '@/lib/api/client';
 import type { UserHeatmap, UserPublicProfile } from '@/lib/api/types';
 
 /**
- * 내부 ID 로 다른 사용자의 공개 프로필을 조회합니다.
+ * 내부 ID로 다른 사용자의 공개 프로필을 조회합니다.
  */
 export function getUserById(id: number): Promise<UserPublicProfile> {
   return apiGet<UserPublicProfile>(`/api/v1/users/${id}`);

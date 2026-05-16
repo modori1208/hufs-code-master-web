@@ -1,7 +1,7 @@
 import { config } from '@/lib/config';
 
 /**
- * 사용자 프로필/배경 이미지 절대 URL. updatedAt 을 캐시 키로 부착합니다.
+ * 사용자 프로필/배경 이미지 절대 URL. updatedAt을 캐시 키로 부착합니다.
  */
 export function userImageUrl(
   id: number,

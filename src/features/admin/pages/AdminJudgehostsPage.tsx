@@ -103,7 +103,7 @@ export default function AdminJudgehostsPage() {
 
       <Alert className="mt-6">
         <AlertDescription>
-          judgehost 는 마지막 통신으로부터 <span className="font-medium">1분 이내</span>면 온라인으로 표시됩니다.
+          judgehost는 마지막 통신으로부터 <span className="font-medium">1분 이내</span>면 온라인으로 표시됩니다.
           비활성으로 전환하면 새 채점 작업이 배정되지 않습니다.
         </AlertDescription>
       </Alert>
@@ -209,7 +209,7 @@ export default function AdminJudgehostsPage() {
             ) : (
               <TableRow>
                 <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
-                  등록된 judgehost 가 없습니다. judgehost 가 처음 register 를 호출하면 여기에 자동으로 표시됩니다.
+                  등록된 judgehost가 없습니다. judgehost가 처음 register를 호출하면 여기에 자동으로 표시됩니다.
                 </TableCell>
               </TableRow>
             )}

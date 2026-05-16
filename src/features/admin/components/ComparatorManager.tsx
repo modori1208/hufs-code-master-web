@@ -45,7 +45,7 @@ export function ComparatorManager({ problem }: Props) {
   const remoteScript = scriptQuery.data?.script ?? null;
   const [script, setScript] = useState<string>(DEFAULT_TEMPLATE);
 
-  // 서버에서 받은 스크립트가 있으면 그것을, 없으면 기본 템플릿을 textarea 에 채워둡니다.
+  // 서버에서 받은 스크립트가 있으면 그것을, 없으면 기본 템플릿을 textarea에 채워둡니다.
   // 사용자가 편집을 시작한 뒤에는 덮어쓰지 않습니다.
   const [editedManually, setEditedManually] = useState(false);
   useEffect(() => {
@@ -65,7 +65,7 @@ export function ComparatorManager({ problem }: Props) {
     onSuccess: async () => {
       setEditedManually(false);
       await invalidate();
-      toast.success('커스텀 채점 스크립트를 업로드했습니다. 모드가 CUSTOM 으로 전환되었습니다.');
+      toast.success('커스텀 채점 스크립트를 업로드했습니다. 모드가 CUSTOM으로 전환되었습니다.');
     },
     onError: (err: unknown) => {
       toast.error(`업로드 실패: ${err instanceof Error ? err.message : ''}`);
@@ -78,7 +78,7 @@ export function ComparatorManager({ problem }: Props) {
       setEditedManually(false);
       setScript(DEFAULT_TEMPLATE);
       await invalidate();
-      toast.success('커스텀 채점 스크립트를 제거했습니다. 모드가 LINE_DIFF 로 되돌아갔습니다.');
+      toast.success('커스텀 채점 스크립트를 제거했습니다. 모드가 LINE_DIFF로 되돌아갔습니다.');
     },
     onError: (err: unknown) => {
       toast.error(`삭제 실패: ${err instanceof Error ? err.message : ''}`);
@@ -87,14 +87,14 @@ export function ComparatorManager({ problem }: Props) {
 
   const handleUpload = () => {
     if (!script.trim().startsWith('#!')) {
-      toast.error('스크립트는 shebang(#!) 으로 시작해야 합니다.');
+      toast.error('스크립트는 shebang(#!)으로 시작해야 합니다.');
       return;
     }
     uploadMutation.mutate();
   };
 
   const handleDelete = () => {
-    if (!window.confirm('업로드된 커스텀 채점 스크립트를 제거할까요? 채점 방식이 기본(LINE_DIFF) 으로 되돌아갑니다.')) {
+    if (!window.confirm('업로드된 커스텀 채점 스크립트를 제거할까요? 채점 방식이 기본(LINE_DIFF)으로 되돌아갑니다.')) {
       return;
     }
     deleteMutation.mutate();
@@ -145,7 +145,7 @@ stdin = 사용자 프로그램의 출력
       {problem.has_custom_comparator && !isCustom ? (
         <Alert className="mt-4">
           <AlertDescription>
-            스크립트는 등록되어 있지만 현재 채점 방식이 {problem.compare_mode} 로 설정되어 있어 사용되지 않습니다.
+            스크립트는 등록되어 있지만 현재 채점 방식이 {problem.compare_mode}로 설정되어 있어 사용되지 않습니다.
             문제 정보 폼에서 채점 방식을 CUSTOM으로 바꾸면 활성화됩니다.
           </AlertDescription>
         </Alert>
