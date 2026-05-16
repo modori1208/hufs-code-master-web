@@ -311,7 +311,7 @@ function MemberRow({
         )}
       </TableCell>
       <TableCell className="text-right">
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" disabled={isSelf}>
               {isSelf ? '본인' : '관리'}

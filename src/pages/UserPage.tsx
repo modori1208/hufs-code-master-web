@@ -411,7 +411,7 @@ function ImageEditMenu({ hasImage, userId }: ImageEditMenuProps) {
         className="hidden"
         onChange={handleFile}
       />
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
             type="button"
