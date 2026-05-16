@@ -1,5 +1,8 @@
 import ReactMarkdown from 'react-markdown';
+import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import 'katex/dist/katex.min.css';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -11,8 +14,8 @@ type Props = {
  * 마크다운 본문 렌더러.
  *
  * <p>본문 컨테이너에 Tailwind 의 `prose` 유틸을 적용하여 견출/문단/리스트/코드 블록 등에
- * 기본 타이포그래피 스타일을 입힙니다. GitHub Flavored Markdown (표, 체크박스, 취소선)
- * 도 지원합니다.
+ * 기본 타이포그래피 스타일을 입힙니다. GitHub Flavored Markdown (표, 체크박스, 취소선)과
+ * LaTeX 수식 ({@code $...$} 인라인 / {@code $$...$$} 블록, KaTeX 렌더링)을 지원합니다.
  */
 export function Markdown({ children, className }: Props) {
   return (
@@ -36,7 +39,12 @@ export function Markdown({ children, className }: Props) {
         className,
       )}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{children}</ReactMarkdown>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex]}
+      >
+        {children}
+      </ReactMarkdown>
     </div>
   );
 }

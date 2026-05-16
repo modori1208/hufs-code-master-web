@@ -83,6 +83,16 @@
     @apply shadow-sm;
   }
   /*
+   * KaTeX 수식은 기본적으로 검은색 텍스트라 다크 모드에서 안 보입니다.
+   * prose 의 body color 가 라이트 톤이라 inherit 만으로는 부족해 foreground 토큰을 직접 박아둡니다.
+   */
+  .katex,
+  .katex *,
+  .katex-display,
+  .katex-display * {
+    color: var(--foreground);
+  }
+  /*
    * 페이지에 따라 세로 스크롤바가 나타나거나 사라지면 viewport 폭이 변하면서
    * 가운데 정렬된 헤더·컨테이너가 좌우로 흔들리는 현상이 생깁니다. 스크롤바 영역을
    * 항상 예약해 두어 폭을 고정합니다.
