@@ -4,6 +4,7 @@ import {
   Code2,
   FilePlus2,
   FolderPlus,
+  History,
   LayoutDashboard,
   Loader2,
   ScrollText,
@@ -25,6 +26,7 @@ const AdminMembersPage = lazy(() => import('@/features/admin/pages/AdminMembersP
 const AdminJudgehostsPage = lazy(() => import('@/features/admin/pages/AdminJudgehostsPage'));
 const AdminLanguagesPage = lazy(() => import('@/features/admin/pages/AdminLanguagesPage'));
 const AdminPolicyPage = lazy(() => import('@/features/admin/pages/AdminPolicyPage'));
+const AdminAuditLogsPage = lazy(() => import('@/features/admin/pages/AdminAuditLogsPage'));
 
 const navItems = [
   { to: '/admin', label: '대시보드', icon: LayoutDashboard, end: true },
@@ -34,6 +36,7 @@ const navItems = [
   { to: '/admin/judgehosts', label: 'Judgehost', icon: Server, end: false },
   { to: '/admin/languages', label: '언어', icon: Code2, end: false },
   { to: '/admin/policy', label: '처리방침', icon: ScrollText, end: false },
+  { to: '/admin/audit-logs', label: '감사 로그', icon: History, end: false },
 ];
 
 export default function AdminLayout() {
@@ -87,6 +90,7 @@ export default function AdminLayout() {
               <Route path="judgehosts" element={<AdminJudgehostsPage />} />
               <Route path="languages" element={<AdminLanguagesPage />} />
               <Route path="policy" element={<AdminPolicyPage />} />
+              <Route path="audit-logs" element={<AdminAuditLogsPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>

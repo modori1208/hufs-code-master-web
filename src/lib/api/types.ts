@@ -360,6 +360,21 @@ export type AdminJudgehost = {
   created_at: string;
 };
 
+// ----- Admin - Audit logs -----
+
+export type AdminAuditLog = {
+  id: number;
+  member_id: number | null;
+  action: string;
+  target_type: string | null;
+  target_id: string | null;
+  ip: string | null;
+  http_method: string | null;
+  uri: string | null;
+  metadata: string | null;
+  created_at: string;
+};
+
 // ----- Languages -----
 
 export type LanguageConfig = {

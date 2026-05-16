@@ -1,6 +1,7 @@
 import { apiDelete, apiGet, apiPost, apiPut, buildQuery } from '@/lib/api/client';
 import type {
   AddTrackProblemRequest,
+  AdminAuditLog,
   AdminJudgehost,
   AdminMember,
   AdminTestCase,
@@ -222,4 +223,33 @@ export function updateLanguageConfig(
   body: UpdateLanguageConfigRequest,
 ): Promise<LanguageConfig> {
   return apiPut<LanguageConfig>(`/api/v1/admin/languages/${language}`, body);
+}
+
+// ----- Audit logs -----
+
+export type ListAdminAuditLogsParams = {
+  memberId?: number;
+  action?: string;
+  /** ISO local datetime (예: 2026-05-17T00:00:00) */
+  from?: string;
+  /** ISO local datetime */
+  to?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+};
+
+export function listAdminAuditLogs(
+  params: ListAdminAuditLogsParams = {},
+): Promise<Page<AdminAuditLog>> {
+  return apiGet<Page<AdminAuditLog>>(
+    `/api/v1/admin/audit-logs${buildQuery(params)}`,
+  );
+}
+
+/**
+ * 현재 DB에 적재된 distinct action 목록. 필터 드롭다운 옵션용.
+ */
+export function listAdminAuditLogActions(): Promise<string[]> {
+  return apiGet<string[]>('/api/v1/admin/audit-logs/actions');
 }
