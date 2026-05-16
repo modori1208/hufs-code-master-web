@@ -19,6 +19,9 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      // v7 에서 추가된 규칙. 다이얼로그 open 시 form draft state 초기화 같은 정당한 패턴까지
+      // 막혀서 비활성화. 필요 시 개별 useEffect 를 리팩토링하면서 다시 켤 수 있습니다.
+      'react-hooks/set-state-in-effect': 'off',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },

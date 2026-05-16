@@ -6,7 +6,6 @@ import {
   Camera,
   Clock,
   Flame,
-  Github,
   Image as ImageIcon,
   ListChecks,
   Loader2,
@@ -15,8 +14,8 @@ import {
   Shield,
   Trash2,
   Trophy,
-  Twitter,
 } from 'lucide-react';
+import { GithubIcon, LinkedinIcon, TwitterIcon } from '@/components/brand-icons';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Avatar } from '@/components/ui/avatar';
@@ -71,19 +70,6 @@ import type { UserPublicProfile } from '@/lib/api/types';
 
 const STATUS_MAX = 200;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-
-function LinkedinIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden
-      className={className}
-    >
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.063 2.063 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-    </svg>
-  );
-}
 
 function formatYearMonth(iso: string | null): string {
   if (!iso) return t.common.none;
@@ -551,7 +537,7 @@ function SocialAccounts({ user, isOwner, onEditClick }: SocialAccountsProps) {
     key: 'github' | 'twitter' | 'linkedin';
     username: string;
     href: string;
-    icon: typeof Github;
+    icon: typeof GithubIcon;
     ariaLabel: string;
   }> = [];
   if (user.github_username) {
@@ -559,7 +545,7 @@ function SocialAccounts({ user, isOwner, onEditClick }: SocialAccountsProps) {
       key: 'github',
       username: user.github_username,
       href: `https://github.com/${user.github_username}`,
-      icon: Github,
+      icon: GithubIcon,
       ariaLabel: t.user.social.githubAriaLabel(user.github_username),
     });
   }
@@ -568,7 +554,7 @@ function SocialAccounts({ user, isOwner, onEditClick }: SocialAccountsProps) {
       key: 'twitter',
       username: user.twitter_username,
       href: `https://x.com/${user.twitter_username}`,
-      icon: Twitter,
+      icon: TwitterIcon,
       ariaLabel: t.user.social.twitterAriaLabel(user.twitter_username),
     });
   }
@@ -845,7 +831,7 @@ function ProfileEditDialog({ open, onOpenChange, user }: ProfileEditDialogProps)
           </div>
           <div className="grid gap-2">
             <Label htmlFor="profile-github" className="flex items-center gap-2">
-              <Github className="size-4" />
+              <GithubIcon className="size-4" />
               {t.user.editProfile.dialog.githubLabel}
             </Label>
             <Input
@@ -862,7 +848,7 @@ function ProfileEditDialog({ open, onOpenChange, user }: ProfileEditDialogProps)
           </div>
           <div className="grid gap-2">
             <Label htmlFor="profile-twitter" className="flex items-center gap-2">
-              <Twitter className="size-4" />
+              <TwitterIcon className="size-4" />
               {t.user.editProfile.dialog.twitterLabel}
             </Label>
             <Input
