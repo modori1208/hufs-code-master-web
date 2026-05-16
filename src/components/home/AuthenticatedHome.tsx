@@ -93,13 +93,12 @@ export function AuthenticatedHome({ user }: { user: MemberProfile }) {
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <CalendarDays className="size-4" />
           {new Date().toLocaleDateString('ko-KR', {
-            year: 'numeric',
             month: 'long',
             day: 'numeric',
             weekday: 'long',
           })}
         </div>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-4xl">
+        <h1 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">
           {t.home.authenticated.welcomePrefix}
           {user.nickname ? (
             <Link to={`/users/${user.id}`} className="hover:underline">
@@ -110,7 +109,7 @@ export function AuthenticatedHome({ user }: { user: MemberProfile }) {
           )}
           {t.home.authenticated.welcomeSuffix}
         </h1>
-        <p className="mt-1 text-muted-foreground">{user.department}</p>
+        <p className="mt-2 text-muted-foreground">{user.department}</p>
       </header>
 
       {/* Stats */}
