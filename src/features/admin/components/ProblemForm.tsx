@@ -20,6 +20,7 @@ import type {
 } from '@/lib/api/types';
 
 const DIFFICULTIES: Difficulty[] = [
+  'UNRANKED',
   'BRONZE',
   'SILVER',
   'GOLD',

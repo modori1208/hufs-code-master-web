@@ -12,6 +12,7 @@ import type { Difficulty, Language, SubmissionVerdict } from '@/lib/api/types';
 export const ko = {
   // 도메인 enum 라벨
   difficulty: {
+    UNRANKED: '랭크 없음',
     BRONZE: '브론즈',
     SILVER: '실버',
     GOLD: '골드',

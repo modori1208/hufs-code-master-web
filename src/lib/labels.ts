@@ -15,6 +15,7 @@ export const VERDICT_LABEL = t.verdict;
  * 난이도별 Badge 색상 (Tailwind class).
  */
 export const DIFFICULTY_BADGE: Record<Difficulty, string> = {
+  UNRANKED: 'bg-foreground text-background',
   BRONZE: 'bg-amber-700/15 text-amber-700 dark:text-amber-400',
   SILVER: 'bg-slate-500/15 text-slate-500 dark:text-slate-300',
   GOLD: 'bg-yellow-500/15 text-yellow-600 dark:text-yellow-400',

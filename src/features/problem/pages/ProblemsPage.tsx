@@ -33,6 +33,7 @@ const ALL = 'ALL' as const;
 type DifficultyFilter = typeof ALL | Difficulty;
 
 const DIFFICULTIES: Difficulty[] = [
+  'UNRANKED',
   'BRONZE',
   'SILVER',
   'GOLD',

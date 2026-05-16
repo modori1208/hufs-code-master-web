@@ -88,6 +88,7 @@ export type MemberProfile = {
 // ----- Problem -----
 
 export type Difficulty =
+  | 'UNRANKED'
   | 'BRONZE'
   | 'SILVER'
   | 'GOLD'
