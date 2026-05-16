@@ -17,6 +17,7 @@ import type {
   UpdateProblemRequest,
   UpdateTestCaseRequest,
   UpdateTrackRequest,
+  UploadComparatorRequest,
 } from '@/lib/api/types';
 
 // ----- Problems -----
@@ -70,6 +71,45 @@ export function deleteTestCase(
   return apiDelete<void>(
     `/api/v1/admin/problems/${problemId}/testcases/${testCaseId}`,
   );
+}
+
+// ----- Custom comparator -----
+
+export type ComparatorScript = {
+  /** sh 본문. 등록된 스크립트가 없으면 null. */
+  script: string | null;
+  sha256: string | null;
+  size: number | null;
+};
+
+/**
+ * 문제에 등록된 커스텀 채점 스크립트를 조회합니다. 등록된 스크립트가 없으면 모든 필드가 null.
+ */
+export function getComparator(problemId: number): Promise<ComparatorScript> {
+  return apiGet<ComparatorScript>(
+    `/api/v1/admin/problems/${problemId}/comparator`,
+  );
+}
+
+/**
+ * 문제의 커스텀 채점 스크립트를 업로드/교체합니다. 호출 시 백엔드에서 자동으로
+ * `compare_mode` 가 `CUSTOM` 으로 전환됩니다.
+ */
+export function uploadComparator(
+  problemId: number,
+  body: UploadComparatorRequest,
+): Promise<ProblemDetail> {
+  return apiPut<ProblemDetail>(
+    `/api/v1/admin/problems/${problemId}/comparator`,
+    body,
+  );
+}
+
+/**
+ * 커스텀 채점 스크립트 제거. 채점 방식이 LINE_DIFF 로 되돌아갑니다.
+ */
+export function deleteComparator(problemId: number): Promise<void> {
+  return apiDelete<void>(`/api/v1/admin/problems/${problemId}/comparator`);
 }
 
 // ----- Tracks -----

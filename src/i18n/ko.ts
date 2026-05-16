@@ -65,8 +65,6 @@ export const ko = {
   },
 
   layout: {
-    brandShort: 'CM',
-    brandFull: 'HUFS CODE MASTER',
     menuTitle: '메뉴',
     menuAriaLabel: '메뉴 열기',
     footer: {
@@ -117,7 +115,7 @@ export const ko = {
     callbackFailed: '로그인을 완료하지 못했습니다.',
     backHome: '홈으로 돌아가기',
     loginErrors: {
-      invalidState: '인증 세션이 만료되었거나 변조되었습니다. 다시 시도해 주세요.',
+      invalidState: '인증 세션이 만료되었습니다. 다시 시도해 주세요.',
       invalidCallback: '잘못된 콜백 요청입니다. 다시 시도해 주세요.',
       loginFailed: '로그인에 실패했습니다. 다시 시도해 주세요.',
       unsupportedStatus: '재학생만 이용할 수 있는 서비스입니다.',
@@ -125,7 +123,7 @@ export const ko = {
     nicknameDialog: {
       title: '사용할 닉네임을 정해주세요',
       description:
-        '채점 현황 및 랭킹 등 다른 사용자에게 보이는 화면에서 실명 대신 이 닉네임이 노출됩니다. 닉네임을 설정해야 서비스를 이용할 수 있습니다.',
+        '다른 사용자에게 보이는 화면에서 실명 대신 이 닉네임이 노출됩니다. 닉네임을 설정해야 서비스를 이용할 수 있습니다.',
       label: '닉네임',
       rule: (min: number, max: number) =>
         `${min}~${max}자 사이의 영문, 숫자, 한글만. 다른 사용자와 중복될 수 없습니다.`,

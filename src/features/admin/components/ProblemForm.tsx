@@ -12,7 +12,12 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { DIFFICULTY_LABEL } from '@/lib/labels';
-import type { CreateProblemRequest, Difficulty, ProblemDetail } from '@/lib/api/types';
+import type {
+  CompareMode,
+  CreateProblemRequest,
+  Difficulty,
+  ProblemDetail,
+} from '@/lib/api/types';
 
 const DIFFICULTIES: Difficulty[] = [
   'BRONZE',
@@ -22,6 +27,23 @@ const DIFFICULTIES: Difficulty[] = [
   'DIAMOND',
   'RUBY',
 ];
+
+const COMPARE_MODE_LABEL: Record<CompareMode, string> = {
+  LINE_DIFF: '줄 단위 비교 (기본)',
+  TOKEN: '공백 무시 토큰 비교',
+  FLOAT_EPS: '부동소수점 허용오차',
+  CUSTOM: '커스텀 스크립트',
+};
+
+const COMPARE_MODE_HELP: Record<CompareMode, string> = {
+  LINE_DIFF:
+    '각 줄 끝 공백과 파일 끝 빈 줄을 무시한 줄 단위 비교. 대부분의 표준 PS 문제에 적합합니다.',
+  TOKEN: '공백/줄바꿈 위치를 모두 무시하고 토큰 시퀀스만 비교합니다. 격자 출력 등에는 부적합합니다.',
+  FLOAT_EPS:
+    '토큰별로 비교하되, 양쪽이 모두 숫자인 경우 |x − y| ≤ ε 으로 판정합니다. 오른쪽에 epsilon 을 지정하세요.',
+  CUSTOM:
+    '운영진이 업로드한 sh 스크립트로 채점합니다. 모드 전환은 폼 아래 "커스텀 채점기" 섹션에서 스크립트를 업로드한 뒤에 가능합니다.',
+};
 
 type Props = {
   initial?: ProblemDetail;
@@ -37,7 +59,18 @@ export function ProblemForm({ initial, submitLabel, onSubmit }: Props) {
   const [difficulty, setDifficulty] = useState<Difficulty>(
     initial?.difficulty ?? 'BRONZE',
   );
+  const [compareMode, setCompareMode] = useState<CompareMode>(
+    initial?.compare_mode ?? 'LINE_DIFF',
+  );
+  const [compareArg, setCompareArg] = useState(initial?.compare_arg ?? '');
   const [busy, setBusy] = useState(false);
+
+  const hasCustomScript = initial?.has_custom_comparator ?? false;
+  // 신규 생성에서는 CUSTOM 을 선택할 수 없음 (스크립트 업로드는 문제 생성 후에만 가능).
+  const allowCustom = !!initial && hasCustomScript;
+  const availableModes: CompareMode[] = (
+    ['LINE_DIFF', 'TOKEN', 'FLOAT_EPS', 'CUSTOM'] as const
+  ).filter((m) => m !== 'CUSTOM' || allowCustom);
 
   const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,6 +83,8 @@ export function ProblemForm({ initial, submitLabel, onSubmit }: Props) {
         time_limit_ms: timeLimitMs,
         memory_limit_mb: memoryLimitMb,
         difficulty,
+        compare_mode: compareMode,
+        compare_arg: compareMode === 'FLOAT_EPS' ? compareArg.trim() : null,
       });
     } finally {
       setBusy(false);
@@ -111,6 +146,52 @@ export function ProblemForm({ initial, submitLabel, onSubmit }: Props) {
           />
         </div>
       </div>
+
+      <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+        <div className="grid gap-2">
+          <Label htmlFor="compareMode">채점 방식</Label>
+          <Select
+            value={compareMode}
+            onValueChange={(v) => setCompareMode(v as CompareMode)}
+          >
+            <SelectTrigger id="compareMode">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {availableModes.map((m) => (
+                <SelectItem key={m} value={m}>
+                  {COMPARE_MODE_LABEL[m]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="compareArg">
+            Epsilon
+            <span className="ml-1 text-xs text-muted-foreground">
+              (FLOAT_EPS)
+            </span>
+          </Label>
+          <Input
+            id="compareArg"
+            value={compareArg}
+            onChange={(e) => setCompareArg(e.target.value)}
+            disabled={compareMode !== 'FLOAT_EPS'}
+            placeholder="1e-6"
+            required={compareMode === 'FLOAT_EPS'}
+          />
+        </div>
+      </div>
+      <p className="-mt-2 text-xs text-muted-foreground">
+        {COMPARE_MODE_HELP[compareMode]}
+      </p>
+      {!allowCustom && initial ? (
+        <p className="-mt-3 text-xs text-muted-foreground">
+          커스텀 채점 스크립트가 아직 업로드되어 있지 않아 CUSTOM 모드를 선택할 수 없습니다.
+          아래 "커스텀 채점기" 섹션에서 먼저 스크립트를 등록하세요.
+        </p>
+      ) : null}
 
       <div className="grid gap-2">
         <Label htmlFor="description">본문 (Markdown)</Label>

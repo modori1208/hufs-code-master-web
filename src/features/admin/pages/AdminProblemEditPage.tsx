@@ -2,6 +2,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
+import { ComparatorManager } from '@/features/admin/components/ComparatorManager';
 import { ProblemForm } from '@/features/admin/components/ProblemForm';
 import { TestCaseManager } from '@/features/admin/components/TestCaseManager';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -87,6 +88,12 @@ export default function AdminProblemEditPage() {
         <>
           <Separator className="my-10" />
           <TestCaseManager problemId={problemId} />
+          {query.data ? (
+            <>
+              <Separator className="my-10" />
+              <ComparatorManager problem={query.data} />
+            </>
+          ) : null}
         </>
       ) : null}
     </>

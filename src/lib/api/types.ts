@@ -107,6 +107,16 @@ export type ProblemSample = {
   output: string;
 };
 
+/**
+ * 문제별 채점 방식.
+ *
+ * - LINE_DIFF: 줄 단위 비교 (기본). 각 줄 trailing whitespace 와 파일 끝 빈 줄을 무시.
+ * - TOKEN: 공백 무시 토큰 단위 비교.
+ * - FLOAT_EPS: 부동소수점 허용오차 비교. compare_arg 에 epsilon (예: "1e-6").
+ * - CUSTOM: 운영진이 업로드한 sh 스크립트로 채점.
+ */
+export type CompareMode = 'LINE_DIFF' | 'TOKEN' | 'FLOAT_EPS' | 'CUSTOM';
+
 export type ProblemDetail = {
   id: number;
   title: string;
@@ -114,6 +124,15 @@ export type ProblemDetail = {
   description_markdown: string;
   time_limit_ms: number;
   memory_limit_mb: number;
+  /**
+   * 채점 방식. admin 호출자에게만 채워서 내려옵니다. 일반 사용자 응답에서는 백엔드의
+   * `default-property-inclusion: non_null` 정책에 의해 필드 자체가 빠지므로 undefined.
+   */
+  compare_mode?: CompareMode;
+  /** 채점 파라미터 (FLOAT_EPS 에서 epsilon). admin 만 노출. */
+  compare_arg?: string;
+  /** CUSTOM 모드에서 스크립트가 업로드된 상태인지. admin 만 노출. */
+  has_custom_comparator?: boolean;
   samples: ProblemSample[];
 };
 
@@ -258,9 +277,18 @@ export type CreateProblemRequest = {
   time_limit_ms: number;
   memory_limit_mb: number;
   difficulty: Difficulty;
+  /** 채점 방식. 생략하면 백엔드 기본값 LINE_DIFF. */
+  compare_mode?: CompareMode;
+  /** FLOAT_EPS 의 epsilon 등. */
+  compare_arg?: string | null;
 };
 
 export type UpdateProblemRequest = CreateProblemRequest;
+
+export type UploadComparatorRequest = {
+  /** sh 스크립트 본문. shebang(#!) 으로 시작해야 함. */
+  script: string;
+};
 
 export type AdminTestCase = {
   id: number;
