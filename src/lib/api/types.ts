@@ -151,6 +151,7 @@ export type SubmissionVerdict =
 export type Submission = {
   id: number;
   problem_id: number;
+  problem_title: string;
   language: Language;
   verdict: SubmissionVerdict;
   runtime_ms: number | null;

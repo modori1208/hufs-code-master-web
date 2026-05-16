@@ -14,19 +14,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { t } from '@/i18n';
 import { listProblemSubmissions } from '@/lib/api/problems';
 import { isFirstPage, isLastPage } from '@/lib/api/types';
+import { formatFullDateTime, formatRelativeTime } from '@/lib/format-date';
 import { LANGUAGE_LABEL, VERDICT_BADGE, VERDICT_LABEL } from '@/lib/labels';
 import { cn } from '@/lib/utils';
-
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('ko-KR', { hour12: false });
-  } catch {
-    return iso;
-  }
-}
 
 export function SubmissionFeed({ problemId }: { problemId: number }) {
   const [page, setPage] = useState(0);
@@ -123,7 +117,12 @@ export function SubmissionFeed({ problemId }: { problemId: number }) {
                       {s.memory_kb != null ? `${s.memory_kb} KB` : '-'}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {formatDateTime(s.created_at)}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span>{formatRelativeTime(s.created_at)}</span>
+                        </TooltipTrigger>
+                        <TooltipContent>{formatFullDateTime(s.created_at)}</TooltipContent>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 );

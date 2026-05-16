@@ -55,6 +55,8 @@ export const ko = {
     minutesAgo: (n: number) => `${n}분 전`,
     hoursAgo: (n: number) => `${n}시간 전`,
     secondsAgo: (n: number) => `${n}초 전`,
+    monthsAgo: (n: number) => `${n}개월 전`,
+    yearsAgo: (n: number) => `${n}년 전`,
     justNow: '방금',
     unknownError: '알 수 없는 오류',
     saveFailed: '저장에 실패했습니다.',

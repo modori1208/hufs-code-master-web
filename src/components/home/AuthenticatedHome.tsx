@@ -210,7 +210,7 @@ export function AuthenticatedHome({ user }: { user: MemberProfile }) {
                       to={`/problems/${s.problem_id}`}
                       className="font-medium hover:underline"
                     >
-                      {t.home.authenticated.recent.problemPrefix}{s.problem_id}
+                      {s.problem_title}
                     </Link>
                     <Badge
                       variant="secondary"
