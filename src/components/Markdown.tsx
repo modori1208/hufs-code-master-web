@@ -1,9 +1,22 @@
-import ReactMarkdown from 'react-markdown';
-import rehypeKatex from 'rehype-katex';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
-import 'katex/dist/katex.min.css';
+import { Suspense, lazy } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+
+// react-markdown + remark + rehype + katex 가 함께 200KB+ 가 되므로 메인 번들에서 분리합니다.
+// main.tsx 가 부팅 후 idle 시점에 './MarkdownInner' 를 prefetch 해서 캐시에 미리 올려둡니다.
+const MarkdownInner = lazy(() => import('./MarkdownInner'));
+
+function MarkdownFallback() {
+  return (
+    <div className="space-y-3" aria-hidden>
+      <Skeleton className="h-5 w-3/4" />
+      <Skeleton className="h-5 w-5/6" />
+      <Skeleton className="h-5 w-2/3" />
+      <Skeleton className="h-5 w-4/5" />
+      <Skeleton className="h-5 w-1/2" />
+    </div>
+  );
+}
 
 type Props = {
   children: string;
@@ -16,6 +29,8 @@ type Props = {
  * <p>본문 컨테이너에 Tailwind 의 `prose` 유틸을 적용하여 견출/문단/리스트/코드 블록 등에
  * 기본 타이포그래피 스타일을 입힙니다. GitHub Flavored Markdown (표, 체크박스, 취소선)과
  * LaTeX 수식 ({@code $...$} 인라인 / {@code $$...$$} 블록, KaTeX 렌더링)을 지원합니다.
+ *
+ * <p>렌더러 자체는 lazy 로 분리되어 첫 사용 시점에 비동기 로드됩니다.
  */
 export function Markdown({ children, className }: Props) {
   return (
@@ -39,12 +54,9 @@ export function Markdown({ children, className }: Props) {
         className,
       )}
     >
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeKatex]}
-      >
-        {children}
-      </ReactMarkdown>
+      <Suspense fallback={<MarkdownFallback />}>
+        <MarkdownInner>{children}</MarkdownInner>
+      </Suspense>
     </div>
   );
 }

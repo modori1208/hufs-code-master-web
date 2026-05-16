@@ -8,6 +8,19 @@ import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import './index.css';
 
+// 초기 페인트 완료 후 idle 시점에 마크다운 청크를 미리 받아둡니다.
+// 문제 페이지/처리방침 진입 시 별도 요청 없이 즉시 렌더되도록 하기 위함.
+type IdleWindow = Window & {
+  requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+};
+const w = window as IdleWindow;
+const prefetchMarkdown = () => void import('@/components/MarkdownInner');
+if (typeof w.requestIdleCallback === 'function') {
+  w.requestIdleCallback(prefetchMarkdown, { timeout: 2000 });
+} else {
+  setTimeout(prefetchMarkdown, 1000);
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
