@@ -168,7 +168,6 @@ export function SubmissionPanel({ problemId }: { problemId: number }) {
           </Select>
           <Button variant="outline" size="sm" onClick={handleReset}>
             <RotateCcw className="size-4" />
-            {t.submitPanel.templateButton}
           </Button>
         </div>
       </CardHeader>
