@@ -7,6 +7,14 @@ export type ApiResponse<T> = {
   message: string | null;
 };
 
+/** 개인정보 처리방침 한 버전. */
+export type PrivacyPolicy = {
+  id: number;
+  effective_date: string; // YYYY-MM-DD
+  content: string; // Markdown
+  created_at: string;
+};
+
 /**
  * Spring Data 의 `Page<T>` 가 PagedModel(VIA_DTO) 로 직렬화된 형태 (SNAKE_CASE 변환 후).
  * 백엔드 Application 에 {@code @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO)}
@@ -71,6 +79,10 @@ export type MemberProfile = {
   twitter_username: string | null;
   /** LinkedIn vanity slug (https://www.linkedin.com/in/{value}). */
   linkedin_username: string | null;
+  /** 사용자가 동의한 처리방침 시행일 (ISO YYYY-MM-DD). 미동의면 null. */
+  agreed_policy_effective_date: string | null;
+  /** 현재 시행 중인 처리방침 시행일 (서버 상수). 위 값과 다르면 재동의 필요. */
+  current_policy_effective_date: string;
 };
 
 // ----- Problem -----

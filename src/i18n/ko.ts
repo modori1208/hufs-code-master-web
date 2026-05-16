@@ -70,12 +70,19 @@ export const ko = {
     footer: {
       copyright: (year: number) => `© ${year} HUFSTORY · 한국외국어대학교`,
       sponsor: '이 플랫폼은 교수학습개발센터의 Bring Your Own Ideas 지원으로 제작되었습니다.',
+      privacy: '개인정보처리방침',
     },
     nav: {
       problems: '문제',
       tracks: '트랙',
       submissions: '내 제출',
     },
+  },
+
+  privacy: {
+    pageTitle: '개인정보처리방침',
+    effectiveDateLabel: '시행일',
+    loadFailed: '처리방침을 불러오지 못했습니다.',
   },
 
   userMenu: {
@@ -136,6 +143,17 @@ export const ko = {
       title: '계정이 제한되었습니다.',
       description:
         '운영 정책 위반으로 인해 사이트 이용이 제한되었으며 프로필은 본인에게만 표시됩니다.',
+    },
+    policyDialog: {
+      titleFirst: '개인정보처리방침 동의',
+      titleRevised: '개인정보처리방침이 개정되었습니다',
+      descriptionFirst: '서비스를 이용하시려면 아래 내용을 확인하고 동의해 주세요.',
+      descriptionRevised:
+        '시행일이 변경되었습니다. 계속 이용하시려면 아래 내용을 다시 확인하고 동의해 주세요.',
+      agreeCheckbox: '개인정보처리방침을 확인하였으며 동의합니다.',
+      submit: '동의하고 계속',
+      submitting: '처리 중...',
+      saveFailed: '동의 처리에 실패했습니다. 잠시 후 다시 시도해 주세요.',
     },
   },
 

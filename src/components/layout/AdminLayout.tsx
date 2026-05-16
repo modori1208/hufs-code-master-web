@@ -6,6 +6,7 @@ import {
   FolderPlus,
   LayoutDashboard,
   Loader2,
+  ScrollText,
   Server,
   Users,
 } from 'lucide-react';
@@ -23,6 +24,7 @@ const AdminTrackEditPage = lazy(() => import('@/pages/AdminTrackEditPage'));
 const AdminMembersPage = lazy(() => import('@/pages/AdminMembersPage'));
 const AdminJudgehostsPage = lazy(() => import('@/pages/AdminJudgehostsPage'));
 const AdminLanguagesPage = lazy(() => import('@/pages/AdminLanguagesPage'));
+const AdminPolicyPage = lazy(() => import('@/pages/AdminPolicyPage'));
 
 const navItems = [
   { to: '/admin', label: '대시보드', icon: LayoutDashboard, end: true },
@@ -31,6 +33,7 @@ const navItems = [
   { to: '/admin/members', label: '회원', icon: Users, end: false },
   { to: '/admin/judgehosts', label: 'Judgehost', icon: Server, end: false },
   { to: '/admin/languages', label: '언어', icon: Code2, end: false },
+  { to: '/admin/policy', label: '처리방침', icon: ScrollText, end: false },
 ];
 
 export default function AdminLayout() {
@@ -83,6 +86,7 @@ export default function AdminLayout() {
               <Route path="members" element={<AdminMembersPage />} />
               <Route path="judgehosts" element={<AdminJudgehostsPage />} />
               <Route path="languages" element={<AdminLanguagesPage />} />
+              <Route path="policy" element={<AdminPolicyPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>

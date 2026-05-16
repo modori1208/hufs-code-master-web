@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FilePlus2, FolderPlus, Users } from 'lucide-react';
+import { FilePlus2, FolderPlus, ScrollText, Users } from 'lucide-react';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const sections = [
@@ -20,6 +20,12 @@ const sections = [
     title: '회원 관리',
     description: '회원을 검색하고 권한·차단을 관리합니다.',
     to: '/admin/members',
+  },
+  {
+    icon: ScrollText,
+    title: '처리방침 관리',
+    description: '개인정보처리방침 버전을 등록·수정합니다.',
+    to: '/admin/policy',
   },
 ];
 

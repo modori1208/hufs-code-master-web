@@ -32,6 +32,13 @@ export function updateSocialAccounts(
   return apiPut<MemberProfile>('/api/v1/me/social-accounts', request);
 }
 
+/**
+ * 현재 시행 중인 개인정보 처리방침에 동의. 서버가 자신의 시행일 상수를 기록합니다.
+ */
+export function agreeCurrentPolicy(): Promise<MemberProfile> {
+  return apiPut<MemberProfile>('/api/v1/me/agree-policy', {});
+}
+
 export type ImageKind = 'profile' | 'cover';
 
 /**

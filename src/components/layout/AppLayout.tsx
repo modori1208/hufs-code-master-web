@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { BannedScreenDialog } from '@/components/auth/BannedScreenDialog';
-import { NicknameSetupDialog } from '@/components/auth/NicknameSetupDialog';
+import { OnboardingDialog } from '@/components/auth/OnboardingDialog';
 import { t } from '@/i18n';
 import { Container } from './Container';
 import { Header } from './Header';
@@ -21,8 +21,8 @@ export function AppLayout() {
 
       {/* 차단된 사용자에게 로그인 시 한 번 띄우는 안내 모달 (닫을 수 있음). */}
       <BannedScreenDialog />
-      {/* 닉네임 미설정 사용자에게 강제로 뜨는 모달. */}
-      <NicknameSetupDialog />
+      {/* 처리방침 동의·닉네임 설정 등 강제 온보딩 단계를 위저드로 처리. 필요한 step 만 동적 포함. */}
+      <OnboardingDialog />
     </div>
   );
 }
