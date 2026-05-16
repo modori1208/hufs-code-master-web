@@ -65,6 +65,8 @@ export const ko = {
   layout: {
     brandShort: 'CM',
     brandFull: 'HUFS CODE MASTER',
+    menuTitle: '메뉴',
+    menuAriaLabel: '메뉴 열기',
     footer: {
       copyright: (year: number) => `© ${year} HUFSTORY · 한국외국어대학교`,
       sponsor: '이 플랫폼은 교수학습개발센터의 Bring Your Own Ideas 지원으로 제작되었습니다.',

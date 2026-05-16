@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/*
+ * Tailwind v4 의 dark variant 기본값은 prefers-color-scheme 미디어 쿼리지만, 우리는 next-themes
+ * 가 토글하는 `.dark` 클래스 기반으로 운영합니다. 그래서 variant 를 클래스 기반으로 재정의합니다.
+ * 이렇게 하면 `dark:` 가 붙은 모든 유틸 (예: dark:hidden, dark:bg-...) 이 앱 테마 토글에 따라 동작합니다.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --background: oklch(1 0 0);
