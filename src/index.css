@@ -100,6 +100,23 @@
   html {
     scrollbar-gutter: stable;
   }
+  /*
+   * Radix Dialog 의 scroll-lock(react-remove-scroll)이 body 에 padding/margin-right 를
+   * 추가해 "사라진 스크롤바" 만큼 보정하려 하는데, 위의 scrollbar-gutter:stable 로 이미 폭을
+   * 고정해뒀으므로 그 보정이 오히려 콘텐츠를 좌측으로 밀어버립니다.
+   *
+   * react-remove-scroll 은 라이브러리 버전에 따라 (1) body 셀렉터, (2) 동적 클래스 셀렉터
+   * (.ReactRemoveScrollBar-...) 둘 다 사용하므로 specificity 만으로는 안전하지 않습니다.
+   * 대신 이 룰을 @layer base 안에 넣어 두면 cascade layer 규칙상 unlayered !important 보다
+   * 우선합니다 (CSS spec: 작가 !important 끼리 비교 시 레이어 > 언레이어).
+   *
+   * padding/margin/width 모두 무력화해 어느 gapMode 든 영향이 없도록 합니다.
+   */
+  html body {
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+    width: auto !important;
+  }
   body {
     @apply bg-background text-foreground antialiased;
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
