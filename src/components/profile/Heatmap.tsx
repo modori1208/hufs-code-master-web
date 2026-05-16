@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { t } from '@/i18n';
 import { getUserHeatmap } from '@/lib/api/users';
 import { cn } from '@/lib/utils';
@@ -146,22 +147,24 @@ export function Heatmap({ userId }: { userId: number }) {
                 const key = fmtDate(day);
                 const count = countByDate.get(key) ?? 0;
                 const level = future ? 0 : levelOf(count);
+                const tooltipLabel = future
+                  ? key
+                  : count > 0
+                    ? t.user.heatmap.tooltipActive(key, count)
+                    : t.user.heatmap.tooltipEmpty(key);
                 return (
-                  <div
-                    key={key}
-                    title={
-                      future
-                        ? key
-                        : count > 0
-                          ? t.user.heatmap.tooltipActive(key, count)
-                          : t.user.heatmap.tooltipEmpty(key)
-                    }
-                    className={cn(
-                      'size-[11px] rounded-sm',
-                      future ? 'opacity-30' : '',
-                      LEVEL_CLASS[level],
-                    )}
-                  />
+                  <Tooltip key={key}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={cn(
+                          'size-[11px] rounded-sm',
+                          future ? 'opacity-30' : '',
+                          LEVEL_CLASS[level],
+                        )}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>{tooltipLabel}</TooltipContent>
+                  </Tooltip>
                 );
               })}
             </div>
