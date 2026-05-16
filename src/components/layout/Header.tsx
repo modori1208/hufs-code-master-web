@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Menu } from 'lucide-react';
-import { AuthArea } from '@/components/auth/AuthArea';
+import { AuthArea } from '@/features/auth/components/AuthArea';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import { t } from '@/i18n';
 import { cn } from '@/lib/utils';
 import { Container } from './Container';

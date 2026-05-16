@@ -3,23 +3,23 @@ import { Route, Routes } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Container } from '@/components/layout/Container';
-import { RequireAuth } from '@/components/auth/RequireAuth';
+import { RequireAuth } from '@/features/auth/components/RequireAuth';
 import { t } from '@/i18n';
-import { AuthCallbackPage } from '@/pages/AuthCallbackPage';
-import { HomePage } from '@/pages/HomePage';
-import { LoginPage } from '@/pages/LoginPage';
+import { AuthCallbackPage } from '@/features/auth/pages/AuthCallbackPage';
+import { HomePage } from '@/features/home/pages/HomePage';
+import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
-import { ProblemDetailPage } from '@/pages/ProblemDetailPage';
-import { ProblemsPage } from '@/pages/ProblemsPage';
-import { SettingsPage } from '@/pages/SettingsPage';
-import { SubmissionsPage } from '@/pages/SubmissionsPage';
-import { TrackDetailPage } from '@/pages/TrackDetailPage';
-import { TracksPage } from '@/pages/TracksPage';
-import { UserPage } from '@/pages/UserPage';
+import { ProblemDetailPage } from '@/features/problem/pages/ProblemDetailPage';
+import { ProblemsPage } from '@/features/problem/pages/ProblemsPage';
+import { SettingsPage } from '@/features/settings/pages/SettingsPage';
+import { SubmissionsPage } from '@/features/submission/pages/SubmissionsPage';
+import { TrackDetailPage } from '@/features/track/pages/TrackDetailPage';
+import { TracksPage } from '@/features/track/pages/TracksPage';
+import { UserPage } from '@/features/user/pages/UserPage';
 
 // 관리자 코드는 lazy 로드. 자식 라우트 정의는 AdminLayout 내부에서 처리하므로
 // 일반 사용자 메인 번들에는 admin 의 세부 경로/페이지 식별자가 노출되지 않습니다.
-const AdminLayout = lazy(() => import('@/components/layout/AdminLayout'));
+const AdminLayout = lazy(() => import('@/features/admin/AdminLayout'));
 
 function AdminFallback() {
   return (

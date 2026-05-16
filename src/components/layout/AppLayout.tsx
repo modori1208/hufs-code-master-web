@@ -1,8 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import { Mail, MapPin } from 'lucide-react';
-import { BannedScreenDialog } from '@/components/auth/BannedScreenDialog';
-import { OnboardingDialog } from '@/components/auth/OnboardingDialog';
-import { PrivacyPolicyDialog } from '@/components/PrivacyPolicyDialog';
+import { BannedScreenDialog } from '@/features/auth/components/BannedScreenDialog';
+import { OnboardingDialog } from '@/features/auth/components/OnboardingDialog';
+import { PrivacyPolicyDialog } from '@/features/policy/components/PrivacyPolicyDialog';
 import { t } from '@/i18n';
 import { Container } from './Container';
 import { Header } from './Header';
