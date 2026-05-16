@@ -76,6 +76,13 @@
     @apply border-[color:var(--border)] outline-[color:var(--ring)]/50;
   }
   /*
+   * 클릭 가능한 카드 (anchor 또는 button 으로 감싼 Card) 에는 자동으로 그림자를 부여합니다.
+   * 개별 호출부에서 일일이 shadow-sm 을 붙이는 누락 위험을 없애기 위한 중앙화 처리.
+   */
+  :where(a, button) > [data-slot="card"] {
+    @apply shadow-sm;
+  }
+  /*
    * 페이지에 따라 세로 스크롤바가 나타나거나 사라지면 viewport 폭이 변하면서
    * 가운데 정렬된 헤더·컨테이너가 좌우로 흔들리는 현상이 생깁니다. 스크롤바 영역을
    * 항상 예약해 두어 폭을 고정합니다.
