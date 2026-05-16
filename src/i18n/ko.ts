@@ -68,9 +68,11 @@ export const ko = {
     menuTitle: '메뉴',
     menuAriaLabel: '메뉴 열기',
     footer: {
-      copyright: (year: number) => `© ${year} HUFSTORY · 한국외국어대학교`,
+      copyright: (year: number) => `© ${year} HUFSTORY`,
       sponsor: '이 플랫폼은 교수학습개발센터의 Bring Your Own Ideas 지원으로 제작되었습니다.',
       privacy: '개인정보처리방침',
+      address: '17035 경기도 용인시 처인구 모현읍 외대로 81 한국외국어대학교 글로벌캠퍼스 학생회관 313호',
+      email: 'codemaster@gdghufs.com',
     },
     nav: {
       problems: '문제',

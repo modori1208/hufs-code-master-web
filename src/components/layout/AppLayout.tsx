@@ -1,6 +1,8 @@
 import { Outlet } from 'react-router-dom';
+import { Mail, MapPin } from 'lucide-react';
 import { BannedScreenDialog } from '@/components/auth/BannedScreenDialog';
 import { OnboardingDialog } from '@/components/auth/OnboardingDialog';
+import { PrivacyPolicyDialog } from '@/components/PrivacyPolicyDialog';
 import { t } from '@/i18n';
 import { Container } from './Container';
 import { Header } from './Header';
@@ -12,10 +14,29 @@ export function AppLayout() {
       <main className="flex-1">
         <Outlet />
       </main>
-      <footer className="border-t border-border py-6">
-        <Container className="flex flex-col items-center justify-between gap-2 text-sm text-muted-foreground sm:flex-row">
-          <p>{t.layout.footer.copyright(new Date().getFullYear())}</p>
-          <p>{t.layout.footer.sponsor}</p>
+      <footer className="border-t border-border py-8">
+        <Container className="flex flex-col items-center gap-3 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+            <p>{t.layout.footer.copyright(new Date().getFullYear())}</p>
+            <span aria-hidden className="text-muted-foreground/40">·</span>
+            <PrivacyPolicyDialog />
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs">
+            <span className="inline-flex items-center gap-1.5">
+              <MapPin className="size-3" />
+              {t.layout.footer.address}
+            </span>
+            <a
+              href={`mailto:${t.layout.footer.email}`}
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground hover:underline"
+            >
+              <Mail className="size-3" />
+              {t.layout.footer.email}
+            </a>
+          </div>
+          <p className="max-w-2xl text-center text-xs text-muted-foreground/80">
+            {t.layout.footer.sponsor}
+          </p>
         </Container>
       </footer>
 
