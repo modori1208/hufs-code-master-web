@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -50,11 +50,13 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Textarea } from '@/components/ui/textarea';
+import { ImageCropDialog } from '@/components/ImageCropDialog';
 import { Container } from '@/components/layout/Container';
 import { Heatmap } from '@/components/profile/Heatmap';
 import { AUTH_QUERY_KEY, useAuth } from '@/hooks/useAuth';
 import { t } from '@/i18n';
 import { ApiError } from '@/lib/api/client';
+import { DEFAULT_AVATAR_DATA_URL } from '@/lib/default-avatar';
 import {
   deleteImage,
   updateSocialAccounts,
@@ -118,10 +120,6 @@ function daysAgo(dateStr: string | null): string {
   if (diff === 0) return t.common.today;
   if (diff === 1) return t.common.yesterday;
   return t.common.daysAgo(diff);
-}
-
-function getInitial(name: string): string {
-  return name.trim().slice(0, 1).toUpperCase() || '?';
 }
 
 export function UserPage() {
@@ -231,10 +229,14 @@ export function UserPage() {
             {/* 아바타만 cover 아래쪽에 살짝 걸침. 텍스트는 cover 아래로 내려 배경과 분리. */}
             <div className="relative inline-block">
               <Avatar className="-mt-14 size-28 border-4 border-background shadow-md md:-mt-16 md:size-32">
-                {profileUrl ? <AvatarImage src={profileUrl} alt={user.nickname} /> : null}
-                <AvatarFallback className="bg-primary text-2xl font-medium text-primary-foreground">
-                  {getInitial(user.nickname)}
-                </AvatarFallback>
+                <img
+                  src={profileUrl ?? DEFAULT_AVATAR_DATA_URL}
+                  alt={user.nickname}
+                  onError={(e) => {
+                    e.currentTarget.src = DEFAULT_AVATAR_DATA_URL;
+                  }}
+                  className="aspect-square size-full object-cover"
+                />
               </Avatar>
               {isOwner ? (
                 <div className="absolute bottom-0 right-0">
@@ -362,6 +364,7 @@ type ImageEditMenuProps = {
 function ImageEditMenu({ hasImage, userId }: ImageEditMenuProps) {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [cropFile, setCropFile] = useState<File | null>(null);
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ['user', userId] });
@@ -395,8 +398,14 @@ function ImageEditMenu({ hasImage, userId }: ImageEditMenuProps) {
       e.target.value = '';
       return;
     }
-    uploadMutation.mutate(file);
+    setCropFile(file);
     e.target.value = '';
+  };
+
+  const handleCropConfirm = (blob: Blob) => {
+    const cropped = new File([blob], 'profile.jpg', { type: 'image/jpeg' });
+    setCropFile(null);
+    uploadMutation.mutate(cropped);
   };
 
   const handleDelete = () => {
@@ -412,7 +421,7 @@ function ImageEditMenu({ hasImage, userId }: ImageEditMenuProps) {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/png,image/jpeg,image/webp,image/gif"
+        accept="image/png,image/jpeg,image/webp"
         className="hidden"
         onChange={handleFile}
       />
@@ -451,6 +460,14 @@ function ImageEditMenu({ hasImage, userId }: ImageEditMenuProps) {
           ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
+      <ImageCropDialog
+        file={cropFile}
+        aspect={1}
+        maxOutputSize={512}
+        variant="profile"
+        onConfirm={handleCropConfirm}
+        onCancel={() => setCropFile(null)}
+      />
     </>
   );
 }
@@ -626,6 +643,7 @@ function ProfileEditDialog({ open, onOpenChange, user }: ProfileEditDialogProps)
   // `coverFile`: 새로 선택한 파일 (있으면 저장 시 업로드)
   // `coverDeletePending`: 현재 cover 를 제거하기로 표시 (있으면 저장 시 삭제 호출)
   const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverCropFile, setCoverCropFile] = useState<File | null>(null);
   const [coverDeletePending, setCoverDeletePending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
@@ -656,9 +674,14 @@ function ProfileEditDialog({ open, onOpenChange, user }: ProfileEditDialogProps)
       e.target.value = '';
       return;
     }
-    setCoverFile(file);
-    setCoverDeletePending(false);
+    setCoverCropFile(file);
     e.target.value = '';
+  };
+
+  const handleCoverCropConfirm = (blob: Blob) => {
+    setCoverFile(new File([blob], 'cover.jpg', { type: 'image/jpeg' }));
+    setCoverDeletePending(false);
+    setCoverCropFile(null);
   };
 
   const handleCoverDelete = () => {
@@ -673,6 +696,7 @@ function ProfileEditDialog({ open, onOpenChange, user }: ProfileEditDialogProps)
       setTwitter(user.twitter_username ?? '');
       setLinkedin(user.linkedin_username ?? '');
       setCoverFile(null);
+      setCoverCropFile(null);
       setCoverDeletePending(false);
       setErrorMessage(null);
     }
@@ -800,7 +824,7 @@ function ProfileEditDialog({ open, onOpenChange, user }: ProfileEditDialogProps)
             <input
               ref={coverInputRef}
               type="file"
-              accept="image/png,image/jpeg,image/webp,image/gif"
+              accept="image/png,image/jpeg,image/webp"
               className="hidden"
               onChange={handleCoverFile}
             />
@@ -891,6 +915,14 @@ function ProfileEditDialog({ open, onOpenChange, user }: ProfileEditDialogProps)
           </DialogFooter>
         </form>
       </DialogContent>
+      <ImageCropDialog
+        file={coverCropFile}
+        aspect={16 / 5}
+        maxOutputSize={1600}
+        variant="cover"
+        onConfirm={handleCoverCropConfirm}
+        onCancel={() => setCoverCropFile(null)}
+      />
     </Dialog>
   );
 }

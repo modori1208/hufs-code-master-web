@@ -13,7 +13,7 @@ import {
   User as UserIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -31,13 +31,10 @@ import {
 import { AUTH_QUERY_KEY } from '@/hooks/useAuth';
 import { t } from '@/i18n';
 import { logout } from '@/lib/api/auth';
+import { DEFAULT_AVATAR_DATA_URL } from '@/lib/default-avatar';
 import { userImageUrl } from '@/lib/image-urls';
 import { cn } from '@/lib/utils';
 import type { MemberProfile } from '@/lib/api/types';
-
-function getInitial(name: string): string {
-  return name.trim().slice(0, 1).toUpperCase() || '?';
-}
 
 export function UserMenu({ user }: { user: MemberProfile }) {
   const [busy, setBusy] = useState(false);
@@ -69,15 +66,18 @@ export function UserMenu({ user }: { user: MemberProfile }) {
           className="flex h-9 items-center gap-2 px-2 sm:gap-3 sm:pr-3"
         >
           <Avatar className="size-7">
-            {user.has_profile_image ? (
-              <AvatarImage
-                src={userImageUrl(user.id, 'profile', user.profile_image_updated_at)}
-                alt={displayName}
-              />
-            ) : null}
-            <AvatarFallback className="bg-primary text-primary-foreground text-xs font-medium">
-              {getInitial(displayName)}
-            </AvatarFallback>
+            <img
+              src={
+                user.has_profile_image
+                  ? userImageUrl(user.id, 'profile', user.profile_image_updated_at)
+                  : DEFAULT_AVATAR_DATA_URL
+              }
+              alt={displayName}
+              onError={(e) => {
+                e.currentTarget.src = DEFAULT_AVATAR_DATA_URL;
+              }}
+              className="aspect-square size-full object-cover"
+            />
           </Avatar>
           <span className="hidden text-sm font-medium sm:inline">
             {displayName}
