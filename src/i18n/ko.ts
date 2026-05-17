@@ -312,6 +312,7 @@ export const ko = {
     notFound: '사용자를 찾을 수 없습니다.',
     loadFailed: '사용자 정보를 불러오지 못했습니다.',
     adminBadge: '관리자',
+    professorBadge: '교수',
     joinedAt: (date: string) => `가입일: ${date}`,
     stats: {
       currentStreak: '현재 스트릭',

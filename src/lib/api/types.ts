@@ -232,6 +232,7 @@ export type UserPublicProfile = {
   nickname: string;
   department: string;
   role: MemberRole;
+  status: MemberStatus;
   status_message: string | null;
   has_profile_image: boolean;
   profile_image_updated_at: string | null;

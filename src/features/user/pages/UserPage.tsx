@@ -6,6 +6,7 @@ import {
   Camera,
   Clock,
   Flame,
+  GraduationCap,
   Image as ImageIcon,
   ListChecks,
   Loader2,
@@ -239,6 +240,15 @@ export function UserPage() {
                 <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
                   {user.nickname}
                 </h1>
+                {user.status === 'PROFESSOR' ? (
+                  <Badge
+                    variant="secondary"
+                    className="gap-1 bg-sky-500/15 text-sky-700 dark:text-sky-400"
+                  >
+                    <GraduationCap className="size-3" />
+                    {t.user.professorBadge}
+                  </Badge>
+                ) : null}
                 {user.role === 'ADMIN' ? (
                   <Badge variant="secondary" className="gap-1">
                     <Shield className="size-3" />
