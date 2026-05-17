@@ -1,9 +1,11 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Clock, Loader2, MemoryStick } from 'lucide-react';
+import { Check, Clock, Copy, Loader2, MemoryStick } from 'lucide-react';
+import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -157,40 +159,67 @@ function ProblemContent({ problem }: { problem: ProblemDetail }) {
         <section className="mt-10">
           <h2 className="text-xl font-semibold">{t.problems.detail.samples}</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
-            {problem.samples.map((s) => (
+            {problem.samples.map((s, idx) => (
               <div
                 key={s.order_index}
                 className="grid grid-cols-1 gap-3 md:col-span-2 md:grid-cols-2"
               >
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">
-                      {t.problems.detail.sampleInputN(s.order_index)}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <pre className="overflow-x-auto rounded-md bg-muted p-3 text-sm">
-                      <code>{s.input}</code>
-                    </pre>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">
-                      {t.problems.detail.sampleOutputN(s.order_index)}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <pre className="overflow-x-auto rounded-md bg-muted p-3 text-sm">
-                      <code>{s.output}</code>
-                    </pre>
-                  </CardContent>
-                </Card>
+                <SampleCard
+                  title={t.problems.detail.sampleInputN(idx + 1)}
+                  body={s.input}
+                />
+                <SampleCard
+                  title={t.problems.detail.sampleOutputN(idx + 1)}
+                  body={s.output}
+                />
               </div>
             ))}
           </div>
         </section>
       ) : null}
     </>
+  );
+}
+
+function SampleCard({ title, body }: { title: string; body: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(body);
+      setCopied(true);
+      toast.success(`${title}을(를) 복사했습니다.`);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.error('복사에 실패했습니다.');
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm">{title}</CardTitle>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-7"
+          onClick={handleCopy}
+          aria-label={`${title} 복사`}
+          title="복사"
+        >
+          {copied ? (
+            <Check className="size-3.5 text-emerald-600" />
+          ) : (
+            <Copy className="size-3.5" />
+          )}
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <pre className="overflow-x-auto rounded-md bg-muted p-3 text-sm">
+          <code>{body}</code>
+        </pre>
+      </CardContent>
+    </Card>
   );
 }

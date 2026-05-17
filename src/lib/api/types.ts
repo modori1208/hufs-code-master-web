@@ -308,7 +308,7 @@ export type AdminTestCase = {
 };
 
 export type CreateTestCaseRequest = {
-  order_index: number;
+  /** 공개 여부 — true 면 문제 상세에서 예제로 노출. */
   sample: boolean;
   input: string;
   output: string;

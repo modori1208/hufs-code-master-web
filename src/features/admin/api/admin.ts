@@ -92,6 +92,19 @@ export function deleteTestCase(
   );
 }
 
+/**
+ * 테스트케이스 순서를 한 칸 위/아래로 이동.
+ */
+export function moveTestCase(
+  problemId: number,
+  testCaseId: number,
+  direction: 'up' | 'down',
+): Promise<void> {
+  return apiPut<void>(
+    `/api/v1/admin/problems/${problemId}/testcases/${testCaseId}/move?direction=${direction}`,
+  );
+}
+
 // ----- Custom comparator -----
 
 export type ComparatorScript = {

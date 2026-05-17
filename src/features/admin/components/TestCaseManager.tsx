@@ -1,6 +1,6 @@
 import { useEffect, useState, type SyntheticEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -13,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -29,6 +28,7 @@ import {
   addTestCase,
   deleteTestCase,
   listAdminTestCases,
+  moveTestCase,
   updateTestCase,
 } from '@/features/admin/api/admin';
 import type { AdminTestCase, CreateTestCaseRequest } from '@/lib/api/types';
@@ -49,6 +49,14 @@ export function TestCaseManager({ problemId }: { problemId: number }) {
 
   const [dialog, setDialog] = useState<DialogState>({ mode: 'closed' });
 
+  const moveMutation = useMutation({
+    mutationFn: ({ id, direction }: { id: number; direction: 'up' | 'down' }) =>
+      moveTestCase(problemId, id, direction),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
+    onError: (err) =>
+      toast.error(`이동 실패: ${err instanceof Error ? err.message : ''}`),
+  });
+
   const handleDelete = async (tc: AdminTestCase) => {
     if (!window.confirm(`테스트케이스 #${tc.id}를 삭제할까요?`)) return;
     try {
@@ -60,13 +68,16 @@ export function TestCaseManager({ problemId }: { problemId: number }) {
     }
   };
 
+  const cases = query.data ?? [];
+
   return (
     <section>
       <header className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold">테스트케이스</h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            sample=true 인 케이스는 문제 상세 페이지에 공개됩니다. 나머지는 채점 전용.
+            sample=true 인 케이스는 문제 상세 페이지에 공개됩니다. 나머지는 채점 전용. 순서는
+            추가 순서대로 자동 부여되며, 위/아래 버튼으로 변경할 수 있습니다.
           </p>
         </div>
         <Button onClick={() => setDialog({ mode: 'create' })}>
@@ -79,26 +90,25 @@ export function TestCaseManager({ problemId }: { problemId: number }) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-20">#</TableHead>
-              <TableHead className="w-20">순서</TableHead>
+              <TableHead className="w-14">#</TableHead>
               <TableHead className="w-24">공개</TableHead>
               <TableHead>입력</TableHead>
               <TableHead>출력</TableHead>
-              <TableHead className="w-28 text-right">작업</TableHead>
+              <TableHead className="w-40 text-right">작업</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {query.isLoading ? (
               Array.from({ length: 3 }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell colSpan={6}>
+                  <TableCell colSpan={5}>
                     <Skeleton className="h-5 w-full" />
                   </TableCell>
                 </TableRow>
               ))
             ) : query.isError ? (
               <TableRow>
-                <TableCell colSpan={6}>
+                <TableCell colSpan={5}>
                   <Alert variant="destructive">
                     <AlertDescription>
                       테스트케이스를 불러오지 못했습니다.
@@ -106,13 +116,12 @@ export function TestCaseManager({ problemId }: { problemId: number }) {
                   </Alert>
                 </TableCell>
               </TableRow>
-            ) : query.data && query.data.length > 0 ? (
-              query.data.map((tc) => (
+            ) : cases.length > 0 ? (
+              cases.map((tc, idx) => (
                 <TableRow key={tc.id}>
                   <TableCell className="font-mono text-xs text-muted-foreground">
                     {tc.id}
                   </TableCell>
-                  <TableCell>{tc.order_index}</TableCell>
                   <TableCell>
                     {tc.sample ? (
                       <Badge variant="secondary">공개</Badge>
@@ -127,6 +136,28 @@ export function TestCaseManager({ problemId }: { problemId: number }) {
                     {tc.output.replace(/\n/g, '↵')}
                   </TableCell>
                   <TableCell className="text-right">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      disabled={idx === 0 || moveMutation.isPending}
+                      onClick={() =>
+                        moveMutation.mutate({ id: tc.id, direction: 'up' })
+                      }
+                      aria-label="위로 이동"
+                    >
+                      <ArrowUp className="size-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      disabled={idx === cases.length - 1 || moveMutation.isPending}
+                      onClick={() =>
+                        moveMutation.mutate({ id: tc.id, direction: 'down' })
+                      }
+                      aria-label="아래로 이동"
+                    >
+                      <ArrowDown className="size-4" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -147,7 +178,7 @@ export function TestCaseManager({ problemId }: { problemId: number }) {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={5}
                   className="py-10 text-center text-muted-foreground"
                 >
                   등록된 테스트케이스가 없습니다.
@@ -162,7 +193,6 @@ export function TestCaseManager({ problemId }: { problemId: number }) {
         problemId={problemId}
         state={dialog}
         onClose={() => setDialog({ mode: 'closed' })}
-        nextOrderIndex={query.data?.length ?? 0}
       />
     </section>
   );
@@ -172,16 +202,14 @@ type DialogProps = {
   problemId: number;
   state: DialogState;
   onClose: () => void;
-  nextOrderIndex: number;
 };
 
-function TestCaseDialog({ problemId, state, onClose, nextOrderIndex }: DialogProps) {
+function TestCaseDialog({ problemId, state, onClose }: DialogProps) {
   const queryClient = useQueryClient();
   const queryKey = ['admin', 'testcases', problemId] as const;
   const isOpen = state.mode !== 'closed';
   const editing = state.mode === 'edit' ? state.testCase : null;
 
-  const [orderIndex, setOrderIndex] = useState(0);
   const [sample, setSample] = useState(false);
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
@@ -190,17 +218,15 @@ function TestCaseDialog({ problemId, state, onClose, nextOrderIndex }: DialogPro
     if (state.mode === 'closed') return;
     if (state.mode === 'edit') {
       const tc = state.testCase;
-      setOrderIndex(tc.order_index);
       setSample(tc.sample);
       setInput(tc.input);
       setOutput(tc.output);
     } else {
-      setOrderIndex(nextOrderIndex);
       setSample(false);
       setInput('');
       setOutput('');
     }
-  }, [state, nextOrderIndex]);
+  }, [state]);
 
   const mutation = useMutation({
     mutationFn: async (body: CreateTestCaseRequest) => {
@@ -224,7 +250,6 @@ function TestCaseDialog({ problemId, state, onClose, nextOrderIndex }: DialogPro
   const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     mutation.mutate({
-      order_index: orderIndex,
       sample,
       input,
       output,
@@ -240,33 +265,21 @@ function TestCaseDialog({ problemId, state, onClose, nextOrderIndex }: DialogPro
           </DialogTitle>
           <DialogDescription>
             입력과 출력은 UTF-8 텍스트로 저장됩니다. 줄바꿈을 명시적으로 포함하세요.
+            순서는 추가 후 표에서 위/아래 버튼으로 조정할 수 있습니다.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="grid gap-2">
-              <Label htmlFor="tc-order">순서</Label>
-              <Input
-                id="tc-order"
-                type="number"
-                min={0}
-                value={orderIndex}
-                onChange={(e) => setOrderIndex(Number(e.target.value))}
-                required
-              />
-            </div>
-            <div className="flex items-end gap-2 pb-2">
-              <input
-                id="tc-sample"
-                type="checkbox"
-                checked={sample}
-                onChange={(e) => setSample(e.target.checked)}
-                className="size-4 cursor-pointer rounded border-border"
-              />
-              <Label htmlFor="tc-sample" className="cursor-pointer">
-                예제로 공개 (sample)
-              </Label>
-            </div>
+          <div className="flex items-center gap-2">
+            <input
+              id="tc-sample"
+              type="checkbox"
+              checked={sample}
+              onChange={(e) => setSample(e.target.checked)}
+              className="size-4 cursor-pointer rounded border-border"
+            />
+            <Label htmlFor="tc-sample" className="cursor-pointer">
+              예제로 공개 (sample)
+            </Label>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="tc-input">입력</Label>
