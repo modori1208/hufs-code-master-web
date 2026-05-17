@@ -125,12 +125,23 @@ export function ProblemsPage() {
                     {problem.id}
                   </TableCell>
                   <TableCell>
-                    <Link
-                      to={`/problems/${problem.id}`}
-                      className="font-medium hover:underline"
-                    >
-                      {problem.title}
-                    </Link>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Link
+                        to={`/problems/${problem.id}`}
+                        className="font-medium hover:underline"
+                      >
+                        {problem.title}
+                      </Link>
+                      {problem.published === false ? (
+                        <Badge
+                          variant="secondary"
+                          className="bg-violet-500/15 text-violet-700 dark:text-violet-400"
+                          title="관리자에게만 보이는 표시 — 일반 사용자에게는 노출되지 않는 문제입니다."
+                        >
+                          비공개
+                        </Badge>
+                      ) : null}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Badge

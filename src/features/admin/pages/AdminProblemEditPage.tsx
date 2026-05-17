@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { ComparatorManager } from '@/features/admin/components/ComparatorManager';
 import { ProblemForm } from '@/features/admin/components/ProblemForm';
+import { ProblemPublishPanel } from '@/features/admin/components/ProblemPublishPanel';
 import { TestCaseManager } from '@/features/admin/components/TestCaseManager';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -92,6 +93,8 @@ export default function AdminProblemEditPage() {
             <>
               <Separator className="my-10" />
               <ComparatorManager problem={query.data} />
+              <Separator className="my-10" />
+              <ProblemPublishPanel problem={query.data} />
             </>
           ) : null}
         </>

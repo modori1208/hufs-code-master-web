@@ -34,8 +34,26 @@ export function updateProblem(
   return apiPut<ProblemDetail>(`/api/v1/admin/problems/${id}`, body);
 }
 
-export function deleteProblem(id: number): Promise<void> {
-  return apiDelete<void>(`/api/v1/admin/problems/${id}`);
+/**
+ * 문제 하드 삭제. force=false (기본) 면 제출 이력이 있는 문제는 거부됩니다. force=true 면
+ * 제출까지 함께 삭제하고 강행 — 잔디/스트릭/내 제출이 함께 사라지므로 마지막 수단으로만 사용.
+ */
+export function deleteProblem(id: number, force = false): Promise<void> {
+  const query = force ? '?force=true' : '';
+  return apiDelete<void>(`/api/v1/admin/problems/${id}${query}`);
+}
+
+/**
+ * 문제 공개 여부 토글. true=공개, false=비공개. 비공개 시 일반 사용자에게 즉시
+ * 노출/제출 기록에서 사라집니다.
+ */
+export function setProblemPublished(
+  id: number,
+  published: boolean,
+): Promise<ProblemDetail> {
+  return apiPut<ProblemDetail>(`/api/v1/admin/problems/${id}/published`, {
+    published,
+  });
 }
 
 // ----- Test cases -----

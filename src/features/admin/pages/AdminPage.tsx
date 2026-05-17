@@ -17,8 +17,8 @@ const sections = [
   },
   {
     icon: Users,
-    title: '회원 관리',
-    description: '회원을 검색하고 권한·차단을 관리합니다.',
+    title: '멤버 관리',
+    description: '멤버를 검색하고 권한 · 차단을 관리합니다.',
     to: '/admin/members',
   },
   {

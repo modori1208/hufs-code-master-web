@@ -130,7 +130,7 @@ export default function AdminAuditLogsPage() {
       <Alert className="mt-6">
         <AlertDescription>
           <p>
-            기록 범위: write 계열 요청(POST/PUT/PATCH/DELETE) + 로그인/로그아웃 + 모든
+            기록 범위: write 계열 요청(POST/PUT/PATCH/DELETE), 로그인/로그아웃, 모든
             관리자 호출. 일반 GET 트래픽은 기록하지 않습니다.
           </p>
         </AlertDescription>
@@ -138,7 +138,7 @@ export default function AdminAuditLogsPage() {
 
       <form onSubmit={handleApply} className="mt-6 grid gap-3 sm:grid-cols-[1fr_1fr_1fr_1fr_auto_auto]">
         <div className="grid gap-1.5">
-          <Label htmlFor="filter-member">회원 ID</Label>
+          <Label htmlFor="filter-member">멤버 ID</Label>
           <Input
             id="filter-member"
             type="number"
@@ -206,7 +206,7 @@ export default function AdminAuditLogsPage() {
             <TableRow>
               <TableHead className="w-16">#</TableHead>
               <TableHead className="w-48">시각</TableHead>
-              <TableHead className="w-24">회원</TableHead>
+              <TableHead className="w-24">멤버</TableHead>
               <TableHead className="w-56">행위</TableHead>
               <TableHead>대상</TableHead>
               <TableHead className="w-72">요청</TableHead>

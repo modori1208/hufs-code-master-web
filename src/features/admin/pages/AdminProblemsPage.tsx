@@ -31,7 +31,7 @@ export default function AdminProblemsPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: deleteProblem,
+    mutationFn: (id: number) => deleteProblem(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['admin', 'problems'] });
       await queryClient.invalidateQueries({ queryKey: ['problems'] });
@@ -43,7 +43,7 @@ export default function AdminProblemsPage() {
   });
 
   const handleDelete = (id: number, title: string) => {
-    if (!window.confirm(`"${title}" 문제를 삭제할까요? 연관된 테스트케이스도 함께 삭제됩니다.`)) {
+    if (!window.confirm(`"${title}" 문제를 삭제할까요? 제출 이력이 있으면 거부됩니다 — 그땐 편집 페이지에서 진행하세요.`)) {
       return;
     }
     deleteMutation.mutate(id);
@@ -72,6 +72,7 @@ export default function AdminProblemsPage() {
               <TableHead className="w-20">#</TableHead>
               <TableHead>제목</TableHead>
               <TableHead className="w-32">난이도</TableHead>
+              <TableHead className="w-28">공개</TableHead>
               <TableHead className="w-32 text-right">작업</TableHead>
             </TableRow>
           </TableHeader>
@@ -79,7 +80,7 @@ export default function AdminProblemsPage() {
             {query.isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell colSpan={4}>
+                  <TableCell colSpan={5}>
                     <Skeleton className="h-5 w-full" />
                   </TableCell>
                 </TableRow>
@@ -115,6 +116,20 @@ export default function AdminProblemsPage() {
                     >
                       {DIFFICULTY_LABEL[p.difficulty]}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {p.published === false ? (
+                      <Badge variant="outline" className="text-muted-foreground">
+                        Draft
+                      </Badge>
+                    ) : (
+                      <Badge
+                        variant="secondary"
+                        className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                      >
+                        공개
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button asChild variant="ghost" size="icon">

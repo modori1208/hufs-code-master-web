@@ -122,9 +122,9 @@ export default function AdminMembersPage() {
     <>
       <header className="flex items-end justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">회원 관리</h1>
+          <h1 className="text-3xl font-bold tracking-tight">멤버 관리</h1>
           <p className="mt-1 text-muted-foreground">
-            가입한 회원을 검색하고 차단·권한을 관리합니다.
+            가입한 멤버를 검색하고 차단 · 권한을 관리합니다.
           </p>
         </div>
       </header>
@@ -183,7 +183,7 @@ export default function AdminMembersPage() {
               <TableRow>
                 <TableCell colSpan={7}>
                   <Alert variant="destructive">
-                    <AlertDescription>회원 목록을 불러오지 못했습니다.</AlertDescription>
+                    <AlertDescription>멤버 목록을 불러오지 못했습니다.</AlertDescription>
                   </Alert>
                 </TableCell>
               </TableRow>
@@ -202,7 +202,7 @@ export default function AdminMembersPage() {
             ) : (
               <TableRow>
                 <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
-                  조건에 맞는 회원이 없습니다.
+                  조건에 맞는 멤버가 없습니다.
                 </TableCell>
               </TableRow>
             )}

@@ -100,6 +100,8 @@ export type ProblemSummary = {
   id: number;
   title: string;
   difficulty: Difficulty;
+  /** 공개 여부. admin 호출자에게만 채워서 내려옴, 일반 사용자에게는 undefined. */
+  published?: boolean;
 };
 
 export type ProblemSample = {
@@ -134,6 +136,8 @@ export type ProblemDetail = {
   compare_arg?: string;
   /** CUSTOM 모드에서 스크립트가 업로드된 상태인지. admin만 노출. */
   has_custom_comparator?: boolean;
+  /** 공개 여부. admin 만 노출 (일반 사용자에게는 미공개 문제 자체가 404 처리됨). */
+  published?: boolean;
   samples: ProblemSample[];
 };
 
@@ -238,7 +242,7 @@ export type UserPublicProfile = {
   longest_streak: number;
   weekly_solve_count: number;
   last_solved_date: string | null;
-  /** 차단된 회원 프로필 여부. 본인/관리자만 조회 가능하며 UI에 제한 배너를 표시합니다. */
+  /** 차단된 멤버 프로필 여부. 본인/관리자만 조회 가능하며 UI에 제한 배너를 표시합니다. */
   restricted: boolean;
   github_username: string | null;
   twitter_username: string | null;

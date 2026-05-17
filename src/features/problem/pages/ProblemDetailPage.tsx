@@ -90,7 +90,18 @@ export function ProblemDetailPage() {
             {DIFFICULTY_LABEL[problem.difficulty]}
           </Badge>
         </div>
-        <h1 className="text-3xl font-bold tracking-tight">{problem.title}</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-3xl font-bold tracking-tight">{problem.title}</h1>
+          {problem.published === false ? (
+            <Badge
+              variant="secondary"
+              className="bg-violet-500/15 text-violet-700 dark:text-violet-400"
+              title="관리자에게만 보이는 표시 — 일반 사용자에게는 이 문제가 노출되지 않습니다."
+            >
+              비공개
+            </Badge>
+          ) : null}
+        </div>
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
             <Clock className="size-4" />
